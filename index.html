@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Job Search HQ — Steven Jackson</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+<style>
+:root {
+  --bg:#0F1629;--surf:#162033;--surf2:#1E2D47;--brd:#263550;--brd2:#334D70;
+  --blue:#2563EB;--bluel:#3B82F6;--bluem:rgba(37,99,235,.15);
+  --green:#10B981;--greenm:rgba(16,185,129,.12);
+  --red:#EF4444;--redm:rgba(239,68,68,.12);
+  --yel:#F59E0B;--yelm:rgba(245,158,11,.12);
+  --pur:#8B5CF6;--purm:rgba(139,92,246,.15);
+  --slate:#94A3B8;--slate2:#64748B;
+  --tx:#E2E8F0;--tx2:#94A3B8;--tx3:#64748B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;display:flex;flex-direction:column;font-size:14px}
+/* HEADER */
+.hdr{background:var(--surf);border-bottom:1px solid var(--brd);padding:0 20px;height:50px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;flex-shrink:0}
+.logo{font-size:15px;font-weight:700;letter-spacing:-.3px}.logo span{color:var(--bluel)}
+.hdr-r{display:flex;align-items:center;gap:12px}
+.last-sync{font-size:11px;color:var(--tx3)}
+/* LAYOUT */
+.app{display:flex;flex:1;min-height:0}
+/* SIDEBAR */
+.sidebar{width:190px;background:var(--surf);border-right:1px solid var(--brd);flex-shrink:0;padding:14px 0}
+.nav-sec{padding:0 10px 10px}
+.nav-lbl{font-size:10px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;padding:0 8px;margin-bottom:4px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;transition:all .12s}
+.nav-item:hover{background:var(--surf2);color:var(--tx)}
+.nav-item.active{background:var(--bluem);color:var(--bluel)}
+.nav-item .ic{font-size:14px;width:16px;text-align:center;flex-shrink:0}
+.nbadge{margin-left:auto;background:var(--blue);color:#fff;font-size:10px;font-weight:600;border-radius:10px;padding:1px 6px;min-width:18px;text-align:center}
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:20px;min-width:0}
+/* PAGE */
+.page{display:none}.page.active{display:block}
+.pg-hdr{margin-bottom:20px}
+.pg-title{font-size:19px;font-weight:700;letter-spacing:-.4px}
+.pg-sub{font-size:12px;color:var(--tx3);margin-top:3px}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:20px}
+.stat{background:var(--surf);border:1px solid var(--brd);border-radius:10px;padding:14px}
+.stat-val{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;margin-bottom:3px}
+.stat-lbl{font-size:11px;color:var(--tx3);font-weight:500}
+.s-blue .stat-val{color:var(--bluel)}.s-green .stat-val{color:var(--green)}
+.s-red .stat-val{color:var(--red)}.s-yel .stat-val{color:var(--yel)}
+.s-pur .stat-val{color:var(--pur)}
+/* SECTION */
+.sec{background:var(--surf);border:1px solid var(--brd);border-radius:10px;overflow:hidden;margin-bottom:16px}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--brd)}
+.sec-title{font-size:13px;font-weight:600}
+.sec-act{background:none;border:1px solid var(--brd2);color:var(--tx2);border-radius:5px;padding:4px 10px;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .12s}
+.sec-act:hover{border-color:var(--blue);color:var(--bluel)}
+/* TABLE */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:500px}
+th{text-align:left;font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;padding:9px 14px;border-bottom:1px solid var(--brd);white-space:nowrap}
+td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--brd);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+@media(max-width:640px){th{padding:7px 10px;font-size:10px}td{padding:8px 10px;font-size:12px}.main{padding:12px}}
+/* STATUS PILLS */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:600;white-space:nowrap}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.p-applied{background:var(--bluem);color:var(--bluel)}.p-applied::before{background:var(--bluel)}
+.p-screening{background:var(--yelm);color:var(--yel)}.p-screening::before{background:var(--yel)}
+.p-interview{background:var(--purm);color:var(--pur)}.p-interview::before{background:var(--pur)}
+.p-offer{background:var(--greenm);color:var(--green)}.p-offer::before{background:var(--green)}
+.p-offer_rejected{background:var(--redm);color:var(--red)}.p-offer_rejected::before{background:var(--red)}
+.p-rejected{background:var(--redm);color:var(--red)}.p-rejected::before{background:var(--red)}
+.p-ghosted{background:rgba(100,116,139,.15);color:var(--slate2)}.p-ghosted::before{background:var(--slate2)}
+.p-hold{background:rgba(245,158,11,.1);color:#d97706}.p-hold::before{background:#d97706}
+.p-pursuing{background:rgba(236,72,153,.12);color:#ec4899}.p-pursuing::before{background:#ec4899}
+.p-callsched{background:rgba(20,184,166,.12);color:#14b8a6}.p-callsched::before{background:#14b8a6}
+/* FORM */
+.add-form{padding:16px;display:none;flex-direction:column;gap:12px;border-bottom:1px solid var(--brd)}
+.add-form.open{display:flex}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ff{display:flex;flex-direction:column;gap:4px}
+.ff label{font-size:11px;font-weight:600;color:var(--tx3)}
+.ff input,.ff select,.ff textarea{background:var(--bg);border:1px solid var(--brd2);color:var(--tx);border-radius:6px;padding:7px 10px;font-size:13px;font-family:inherit;outline:none;transition:border-color .12s}
+.ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--blue)}
+.ff select option{background:var(--surf2)}
+.ff textarea{resize:vertical;min-height:52px}
+.form-acts{display:flex;gap:8px}
+.btn-p{background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-p:hover{background:var(--bluel)}
+.btn-c{background:none;border:1px solid var(--brd2);color:var(--tx2);border-radius:6px;padding:7px 12px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+/* EMPTY */
+.empty{padding:36px 20px;text-align:center;color:var(--tx3);font-size:13px}
+/* DELETE */
+.del{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:13px;padding:2px 5px;border-radius:4px}
+.del:hover{color:var(--red);background:var(--redm)}
+/* SORTABLE HEADERS */
+th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
+th.sortable:hover{color:var(--tx2)}
+th.sortable.asc::after{content:' ↑';color:var(--bluel)}
+th.sortable.desc::after{content:' ↓';color:var(--bluel)}
+/* SEARCH BAR */
+.search-wrap{padding:10px 16px;border-bottom:1px solid var(--brd)}
+.search-input{width:100%;background:var(--bg);border:1px solid var(--brd2);color:var(--tx);border-radius:6px;padding:7px 11px 7px 30px;font-size:13px;font-family:inherit;outline:none;transition:border-color .12s}
+.search-input:focus{border-color:var(--blue)}
+.search-wrap-inner{position:relative}
+.search-wrap-inner::before{content:'⌕';position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--tx3);font-size:14px;pointer-events:none}
+/* STATUS SELECT inline */
+.status-sel{background:var(--surf2);border:1px solid var(--brd2);color:var(--tx);border-radius:5px;padding:2px 6px;font-size:11px;font-family:inherit;cursor:pointer;outline:none}
+/* REPORT */
+.rpt-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.rpt-sec{background:var(--surf);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.rpt-sec h3{font-size:13px;font-weight:600;margin-bottom:12px}
+.rpt-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--brd);font-size:13px}
+.rpt-row:last-child{border-bottom:none}
+.rpt-val{font-weight:600;font-variant-numeric:tabular-nums}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px}
+.bar-lbl{width:90px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+.bar-track{flex:1;height:5px;background:var(--bg);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
+.bar-cnt{width:22px;text-align:right;color:var(--tx3);font-variant-numeric:tabular-nums}
+.rate-big{font-size:32px;font-weight:700;font-variant-numeric:tabular-nums}
+/* TABS */
+.tabs{display:flex;gap:2px;margin-bottom:16px;background:var(--surf);border:1px solid var(--brd);border-radius:7px;padding:3px;width:fit-content}
+.tab{padding:5px 12px;border-radius:4px;font-size:12px;font-weight:500;cursor:pointer;color:var(--tx3);transition:all .12s}
+.tab.active{background:var(--blue);color:#fff}
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surf2);border:1px solid var(--brd2);color:var(--tx);border-radius:7px;padding:9px 16px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .2s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* TAG */
+.tag{font-size:11px;color:var(--tx3);background:var(--surf2);border-radius:4px;padding:1px 5px}
+@media(max-width:640px){.sidebar{display:none}.rpt-grid{grid-template-columns:1fr}.fr{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+.hamburger{display:none;background:none;border:none;color:var(--tx);font-size:20px;cursor:pointer;padding:4px 8px;line-height:1}
+@media(max-width:640px){.hamburger{display:block}}
+.mobile-nav-overlay{display:none;position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.6)}
+.mobile-nav-overlay.open{display:block}
+.mobile-nav-drawer{position:absolute;top:0;left:0;bottom:0;width:220px;background:var(--surf);padding:14px 0;overflow-y:auto;transform:translateX(-100%);transition:transform .2s}
+.mobile-nav-overlay.open .mobile-nav-drawer{transform:translateX(0)}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--surf2);border:1px solid var(--brd2);border-radius:12px;padding:24px;max-width:520px;width:100%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.modal-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--tx3);font-size:18px;cursor:pointer;padding:2px 6px;border-radius:4px}
+.modal-close:hover{color:var(--tx);background:var(--surf)}
+.modal h2{font-size:16px;font-weight:700;margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--tx3);margin-bottom:16px}
+.modal-row{display:flex;gap:8px;margin-bottom:10px;font-size:13px}
+.modal-label{color:var(--tx3);font-weight:500;min-width:90px;flex-shrink:0}
+.modal-val{color:var(--tx);line-height:1.5}
+tr.clickable{cursor:pointer}
+tr.clickable:hover td{background:rgba(37,99,235,.06)}
+.m-field{display:flex;flex-direction:column;gap:4px}
+.m-field label{font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px}
+.m-field input,.m-field select,.m-field textarea{background:var(--bg);border:1px solid var(--brd2);color:var(--tx);border-radius:6px;padding:7px 10px;font-size:13px;font-family:inherit;outline:none;transition:border-color .12s;width:100%}
+.m-field input:focus,.m-field select:focus,.m-field textarea:focus{border-color:var(--blue)}
+.m-field select option{background:var(--surf2)}
+.m-field textarea{resize:vertical;min-height:70px}
+.m-btn-group{display:flex;flex-wrap:wrap;gap:6px}
+.m-btn-opt{background:var(--bg);border:1px solid var(--brd2);color:var(--tx2);border-radius:6px;padding:7px 12px;font-size:12px;font-family:inherit;cursor:pointer;transition:all .12s}
+.m-btn-opt:hover{border-color:var(--blue)}
+.m-btn-opt.active{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="hamburger" data-action="toggleMobileNav">☰</button>
+    <div class="logo">Job<span>HQ</span></div>
+    <span style="font-size:11px;color:var(--tx3)">Steven Jackson</span>
+  </div>
+  <div class="hdr-r">
+    <span class="last-sync" id="lastSync">Never synced</span>
+  </div>
+</header>
+<div class="mobile-nav-overlay" id="mobileNavOverlay" data-action="mobileNavOverlay">
+  <nav class="mobile-nav-drawer">
+    <div class="nav-sec">
+      <div class="nav-lbl">Overview</div>
+      <div class="nav-item" data-action="nav-dashboard-mobile"><span class="ic">◈</span>Dashboard</div>
+      <div class="nav-item" data-action="nav-report-mobile"><span class="ic">↗</span>Report</div>
+    </div>
+    <div class="nav-sec" style="margin-top:6px">
+      <div class="nav-lbl">Tracking</div>
+      <div class="nav-item" data-action="nav-apps-mobile"><span class="ic">📄</span>Applications<span class="nbadge" id="nb-apps-m">0</span></div>
+      <div class="nav-item" data-action="nav-interviews-mobile"><span class="ic">🎙</span>Interviews<span class="nbadge" id="nb-int-m" style="background:var(--pur)">0</span></div>
+      <div class="nav-item" data-action="nav-recruiters-mobile"><span class="ic">📨</span>Recruiters<span class="nbadge" id="nb-rec-m" style="background:var(--yel);color:#000">0</span></div>
+    </div>
+  </nav>
+</div>
+<div class="app">
+  <nav class="sidebar">
+    <div class="nav-sec">
+      <div class="nav-lbl">Overview</div>
+      <div class="nav-item active" data-action="nav-dashboard" id="nav-dashboard"><span class="ic">◈</span>Dashboard</div>
+      <div class="nav-item" data-action="nav-report" id="nav-report"><span class="ic">↗</span>Report</div>
+    </div>
+    <div class="nav-sec" style="margin-top:6px">
+      <div class="nav-lbl">Tracking</div>
+      <div class="nav-item" data-action="nav-apps" id="nav-apps"><span class="ic">📄</span>Applications<span class="nbadge" id="nb-apps">0</span></div>
+      <div class="nav-item" data-action="nav-interviews" id="nav-interviews"><span class="ic">🎙</span>Interviews<span class="nbadge" id="nb-int" style="background:var(--pur)">0</span></div>
+      <div class="nav-item" data-action="nav-recruiters" id="nav-recruiters"><span class="ic">📨</span>Recruiters<span class="nbadge" id="nb-rec" style="background:var(--yel);color:#000">0</span></div>
+    </div>
+  </nav>
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="pg-hdr">
+        <div class="pg-title">Dashboard</div>
+        <div class="pg-sub" id="dash-date"></div>
+      </div>
+      <div class="stats" id="stats-grid">
+        <div class="stat s-blue"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">Total Applications</div></div>
+        <div class="stat s-yel"><div class="stat-val" id="s-screen">0</div><div class="stat-lbl">Screening</div></div>
+        <div class="stat s-pur"><div class="stat-val" id="s-inter">0</div><div class="stat-lbl">Interviewing</div></div>
+        <div class="stat s-green"><div class="stat-val" id="s-offer">0</div><div class="stat-lbl">Offers</div></div>
+        <div class="stat s-red"><div class="stat-val" id="s-reject">0</div><div class="stat-lbl">Rejected</div></div>
+        <div class="stat"><div class="stat-val" id="s-rate" style="color:var(--tx)">0%</div><div class="stat-lbl">Response Rate</div></div>
+      </div>
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">Recent Activity</div><button class="sec-act" data-action="nav-apps">View all →</button></div>
+        <div class="table-wrap"><table><thead><tr><th>Company</th><th>Role</th><th>Activity</th><th>Status</th></tr></thead>
+        <tbody id="dash-activity"></tbody></table></div>
+      </div>
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">Recent Applications</div><button class="sec-act" data-action="nav-apps">View all →</button></div>
+        <div class="table-wrap"><table><thead><tr><th>Company</th><th>Role</th><th>Applied</th><th>Status</th></tr></thead>
+        <tbody id="dash-recent"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- APPLICATIONS -->
+    <div class="page" id="page-apps">
+      <div class="pg-hdr"><div class="pg-title">Applications</div><div class="pg-sub">All tracked job applications since Oct 2, 2026</div></div>
+      <div class="sec">
+        <div class="sec-hd">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="sec-title" id="apps-count-lbl">All Applications</div>
+            <select id="filter-status" data-onchange="renderApps" style="background:var(--surf2);border:1px solid var(--brd2);color:var(--tx2);border-radius:5px;padding:3px 7px;font-size:11px;font-family:inherit;outline:none">
+              <option value="">All statuses</option>
+              <option value="applied">Applied</option>
+              <option value="screening">Screening</option>
+              <option value="interview">Interview</option>
+              <option value="offer">Offer</option>
+              <option value="rejected">Rejected</option>
+              <option value="ghosted">Ghosted</option>
+              <option value="hold">On Hold</option>
+            </select>
+          </div>
+          <button class="sec-act" data-action="toggle-appForm">+ Add</button>
+        </div>
+        <div class="add-form" id="appForm">
+          <div class="fr">
+            <div class="ff"><label>Company</label><input id="f-co" placeholder="Acme Corp"/></div>
+            <div class="ff"><label>Role</label><input id="f-role" placeholder="Senior Engineer"/></div>
+          </div>
+          <div class="fr">
+            <div class="ff"><label>Date Applied</label><input id="f-date" type="date"/></div>
+            <div class="ff"><label>Status</label>
+              <select id="f-status">
+                <option value="applied">Applied</option><option value="screening">Screening</option>
+                <option value="interview">Interview</option><option value="offer">Offer</option>
+                <option value="rejected">Rejected</option><option value="ghosted">Ghosted</option>
+                <option value="hold">On Hold</option>
+              </select>
+            </div>
+          </div>
+          <div class="fr">
+            <div class="ff"><label>Source</label>
+              <select id="f-src">
+                <option>LinkedIn</option><option>Greenhouse</option><option>Dice</option>
+                <option>Workday</option><option>Company Site</option><option>Referral</option>
+                <option>Recruiter</option><option>TheLadders</option><option>Indeed</option>
+                <option>Gmail (auto)</option><option>Other</option>
+              </select>
+            </div>
+            <div class="ff"><label>Link (optional)</label><input id="f-link" placeholder="https://…"/></div>
+          </div>
+          <div class="ff"><label>Notes</label><textarea id="f-notes" placeholder="Comp, referral contact, notes…"></textarea></div>
+          <div class="form-acts">
+            <button class="btn-p" data-action="addApp">Save</button>
+            <button class="btn-c" data-action="toggle-appForm">Cancel</button>
+          </div>
+        </div>
+        <div class="search-wrap">
+          <div class="search-wrap-inner">
+            <input class="search-input" id="app-search" placeholder="Search company, role, or source…" data-oninput="renderApps">
+          </div>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr>
+            <th class="sortable" data-action="sortApps" data-col="co">Company</th>
+            <th class="sortable" data-action="sortApps" data-col="role">Role</th>
+            <th class="sortable" data-action="sortApps" data-col="src">Source</th>
+            <th class="sortable" data-action="sortApps" data-col="date">Date</th>
+            <th class="sortable" data-action="sortApps" data-col="empType">Type</th>
+            <th class="sortable" data-action="sortApps" data-col="status">Status</th>
+            <th></th>
+          </tr></thead>
+          <tbody id="app-table"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- INTERVIEWS -->
+    <div class="page" id="page-interviews">
+      <div class="pg-hdr"><div class="pg-title">Interviews</div><div class="pg-sub">Phone screens, panels, and all interview rounds</div></div>
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">Interview Log</div><button class="sec-act" data-action="toggle-intForm">+ Add</button></div>
+        <div class="add-form" id="intForm">
+          <div class="fr">
+            <div class="ff"><label>Company</label><input id="i-co" placeholder="Acme Corp"/></div>
+            <div class="ff"><label>Round</label>
+              <select id="i-round">
+                <option>Phone Screen</option><option>Recruiter Screen</option><option>Technical Screen</option>
+                <option>Hiring Manager</option><option>Panel / Loop</option><option>Final Round</option><option>Take-Home</option>
+              </select>
+            </div>
+          </div>
+          <div class="fr">
+            <div class="ff"><label>Date & Time</label><input id="i-date" type="datetime-local"/></div>
+            <div class="ff"><label>Interviewer(s)</label><input id="i-people" placeholder="Jane Smith, Eng Manager"/></div>
+          </div>
+          <div class="ff"><label>Notes</label><textarea id="i-notes" placeholder="Topics to prep, questions to ask…"></textarea></div>
+          <div class="form-acts">
+            <button class="btn-p" data-action="addInterview">Save</button>
+            <button class="btn-c" data-action="toggle-intForm">Cancel</button>
+          </div>
+        </div>
+        <div class="search-wrap">
+          <div class="search-wrap-inner">
+            <input class="search-input" id="int-search" placeholder="Search company or round…" data-oninput="renderInterviews">
+          </div>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr>
+            <th class="sortable" data-action="sortInts" data-col="co">Company</th>
+            <th class="sortable" data-action="sortInts" data-col="round">Round</th>
+            <th class="sortable" data-action="sortInts" data-col="date">Date</th>
+            <th>With</th>
+            <th>Notes</th>
+            <th></th>
+          </tr></thead>
+          <tbody id="int-table"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- RECRUITERS -->
+    <div class="page" id="page-recruiters">
+      <div class="pg-hdr"><div class="pg-title">Recruiter Outreach</div><div class="pg-sub">Inbound leads, cold calls, LinkedIn DMs</div></div>
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">Recruiter Log</div><button class="sec-act" data-action="toggle-recForm">+ Add</button></div>
+        <div class="add-form" id="recForm">
+          <div class="fr">
+            <div class="ff"><label>Recruiter Name</label><input id="r-name" placeholder="Jane Smith"/></div>
+            <div class="ff"><label>Company / Agency</label><input id="r-co" placeholder="Google / TechRecruiting Co"/></div>
+          </div>
+          <div class="fr">
+            <div class="ff"><label>Channel</label>
+              <select id="r-ch"><option>LinkedIn DM</option><option>Email</option><option>Phone / Cold Call</option><option>Referral</option></select>
+            </div>
+            <div class="ff"><label>Date</label><input id="r-date" type="date"/></div>
+          </div>
+          <div class="fr">
+            <div class="ff"><label>Role(s) Mentioned</label><input id="r-roles" placeholder="SWE L5, Staff Eng"/></div>
+            <div class="ff"><label>Status</label>
+              <select id="r-status">
+                <option value="new">New Lead</option><option value="responded">Responded</option>
+                <option value="call-scheduled">Call Scheduled</option><option value="pursuing">Pursuing</option><option value="passed">Passed</option>
+              </select>
+            </div>
+          </div>
+          <div class="ff"><label>Notes</label><textarea id="r-notes" placeholder="Comp range, company notes…"></textarea></div>
+          <div class="form-acts">
+            <button class="btn-p" data-action="addRecruiter">Save</button>
+            <button class="btn-c" data-action="toggle-recForm">Cancel</button>
+          </div>
+        </div>
+        <div class="search-wrap">
+          <div class="search-wrap-inner">
+            <input class="search-input" id="rec-search" placeholder="Search recruiter, company, or role…" data-oninput="renderRecruiters">
+          </div>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr>
+            <th class="sortable" data-action="sortRecs" data-col="name">Recruiter</th>
+            <th class="sortable" data-action="sortRecs" data-col="co">Company</th>
+            <th class="sortable" data-action="sortRecs" data-col="channel">Channel</th>
+            <th>Roles</th>
+            <th class="sortable" data-action="sortRecs" data-col="date">Date</th>
+            <th class="sortable" data-action="sortRecs" data-col="status">Status</th>
+            <th></th>
+          </tr></thead>
+          <tbody id="rec-table"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- REPORT -->
+    <div class="page" id="page-report">
+      <div class="pg-hdr"><div class="pg-title">Report</div><div class="pg-sub">Oct 2, 2026 – present · All figures reflect current status in tracker</div></div>
+      <div id="rpt-content"></div>
+    </div>
+
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<div class="modal-overlay" id="modalOverlay" style="display:none" data-action="modalOverlay">
+  <div class="modal" id="modalBox" style="max-width:560px;width:100%">
+    <button class="modal-close" data-action="closeModal">✕</button>
+    <h2 id="m-title" style="margin-bottom:16px"></h2>
+    <div id="m-fields" style="display:flex;flex-direction:column;gap:11px"></div>
+    <div style="display:flex;gap:8px;margin-top:18px">
+      <button class="btn-p" id="modal-save-btn" data-action="modal-save-btn">Save</button>
+      <button class="btn-c" id="modal-cancel-btn" data-action="modal-cancel-btn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA — Supabase backend ────────────────────────────────────
+const SUPABASE_URL = 'https://kplkiyivtswgymgvolxh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwbGtpeWl2dHN3Z3ltZ3ZvbHhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyMTQ1MjksImV4cCI6MjEwODc5MDUyOX0.YDDZiO94I4iYQ86pxQE_K-elmPUmBHNNFeD9xNCTJ3A';
+const STORE_KEY = 'jobtrackerv2';
+let D = { apps: [], interviews: [], recruiters: [], lastSync: null };
+let _dbReady = false;
+
+function setStatus(msg) { const el = document.getElementById('lastSync'); if (el) el.textContent = msg; }
+
+// Supabase REST helper
+async function sbFetch(path, opts = {}) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal',
+      ...opts.headers
+    },
+    ...opts
+  });
+  if (!res.ok) { const t = await res.text(); throw new Error(res.status + ' ' + t); }
+  return res;
+}
+
+// localStorage — instant paint cache only
+function loadLocal() {
+  try { const s = localStorage.getItem(STORE_KEY); if (s) Object.assign(D, JSON.parse(s)); } catch(e) {}
+}
+function saveLocal() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(D)); } catch(e) {}
+}
+
+// Write one record to Supabase (upsert)
+async function saveRecord(coll, rec) {
+  try {
+    await sbFetch(coll, {
+      method: 'POST',
+      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({ id: rec.id, data: rec })
+    });
+  } catch(e) { console.warn('saveRecord failed:', e); }
+  saveLocal();
+  markUpdated();
+}
+
+async function deleteRecord(coll, id) {
+  try {
+    await sbFetch(coll + '?id=eq.' + encodeURIComponent(id), { method: 'DELETE' });
+  } catch(e) { console.warn('deleteRecord failed:', e); }
+  saveLocal();
+  markUpdated();
+}
+
+async function markUpdated() {
+  const now = Date.now();
+  setStatus('Updated ' + fmtDT(new Date(now).toISOString()));
+  try {
+    await sbFetch('meta', {
+      method: 'POST',
+      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({ id: 'lastUpdate', data: { ts: now } })
+    });
+  } catch(e) {}
+}
+
+async function loadLastUpdate() {
+  try {
+    const res = await sbFetch('meta?id=eq.lastUpdate&select=data');
+    const rows = await res.json();
+    const ts = rows[0]?.data?.ts;
+    if (ts) setStatus('Updated ' + fmtDT(new Date(ts).toISOString()));
+    else setStatus('No updates yet');
+  } catch(e) { setStatus('No updates yet'); }
+}
+
+// Fetch all rows from a Supabase table (pages if needed)
+async function fetchAll(table) {
+  const rows = [];
+  let offset = 0;
+  while (true) {
+    const res = await sbFetch(`${table}?select=data&offset=${offset}&limit=1000`);
+    const page = await res.json();
+    if (!page.length) break;
+    rows.push(...page.map(r => r.data));
+    if (page.length < 1000) break;
+    offset += 1000;
+  }
+  return rows;
+}
+
+// Init: load from Supabase
+async function initDb() {
+  setStatus('Loading…');
+  try {
+    const [apps, interviews, recruiters] = await Promise.all([
+      fetchAll('apps'), fetchAll('interviews'), fetchAll('recruiters')
+    ]);
+    D.apps        = apps;
+    D.interviews  = interviews;
+    D.recruiters  = recruiters;
+    saveLocal();
+    _dbReady = true;
+    loadLastUpdate();
+    renderAll();
+  } catch(e) {
+    console.warn('initDb failed:', e);
+    setStatus('DB error — check console');
+    _dbReady = true; // allow UI interaction even if load failed
+  }
+}
+
+loadLocal();
+
+// ── SEED DATA from Gmail sync ─────────────────────────────────
+// Pre-loaded from Gmail sync Oct 15–21, 2026
+// STATUS KEY — how statuses are determined:
+// 'applied'   = confirmation email only, no further contact
+// 'screening' = recruiter/HR reached out to schedule a call, or call occurred
+// 'interview' = formal interview scheduled or completed
+// 'rejected'  = explicit rejection email received
+// 'hold'      = role paused/on hold per company email
+// Statuses are set from the MOST ADVANCED email found, not just confirmation emails
+const SEED = [
+  // ── LINKEDIN CSV IMPORT (Oct 22, 2026) — new entries not already tracked ──
+  // Oct 22 (9h ago)
+  {co:'Sony Pictures Entertainment',role:'Lead Engineer, Identity Management',date:'2026-10-22',status:'applied',src:'LinkedIn',notes:'Culver City, CA (Hybrid)'},
+  {co:'University of Southern California',role:'IAM PAM & SSO Senior Analyst',date:'2026-10-22',status:'applied',src:'LinkedIn',notes:'Los Angeles, CA (Hybrid)'},
+  // Oct 20 (2d ago)
+  {co:'University of Southern California',role:'IAM Directory and IGA Senior Analyst',date:'2026-10-20',status:'applied',src:'LinkedIn',notes:'Los Angeles, CA (Hybrid)'},
+  {co:'Talent Mappers',role:'Senior Security Engineer',date:'2026-10-20',status:'applied',src:'LinkedIn',notes:'Denver Metropolitan Area (Hybrid)'},
+  {co:'Enlyte',role:'Senior Information Systems Engineer PAM',date:'2026-10-20',status:'applied',src:'LinkedIn',notes:'Remote'},
+  {co:'Sandisk',role:'Staff Security Operations Engineer',date:'2026-10-20',status:'applied',src:'LinkedIn',notes:'Irvine, CA (On-site)'},
+  {co:'Impulse Space',role:'Identity Governance Engineer',date:'2026-10-20',status:'applied',src:'LinkedIn',notes:'Redondo Beach, CA (On-site)'},
+  // Oct 19 (3d ago)
+  {co:'Match Group',role:'Senior Information Security Engineer',date:'2026-10-19',status:'applied',src:'LinkedIn',notes:'Los Angeles, CA (Hybrid)'},
+  {co:'Hyundai Autoever America',role:'Engineering Systems Administrator - IAM',date:'2026-10-19',status:'applied',src:'LinkedIn',notes:'Irvine, CA'},
+  {co:'Guava',role:'Security Engineer',date:'2026-10-19',status:'applied',src:'LinkedIn',notes:'Los Angeles Metropolitan Area'},
+  {co:'Global Technology',role:'IAM InfoSec Engineer',date:'2026-10-19',status:'applied',src:'LinkedIn',notes:'Denver, CO (Hybrid)'},
+  {co:'24 Hour Home Care',role:'Security Engineer',date:'2026-10-19',status:'applied',src:'LinkedIn',notes:'El Segundo, CA (Remote)'},
+  // Oct 17 (5d ago)
+  {co:'Reddit',role:'Senior Backend Engineer, IAM',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'San Francisco, CA (Remote)'},
+  {co:'The Blackstone Group',role:'Security Operations Engineer AVP',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Miami, FL'},
+  {co:'Costco',role:'Quality Engineer - Application Security - Costco Travel',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Seattle, WA'},
+  {co:'Versant Health',role:'Senior Identity Engineer',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Remote'},
+  {co:'KPMG',role:'Lead Specialist, IAM Delivery Manager',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Miami, FL (Hybrid)'},
+  {co:'Tata Consultancy Services',role:'IAM Full Stack Developer',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Seattle, WA'},
+  {co:'Tata Consultancy Services',role:'Ping Engineer',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Chicago, IL'},
+  {co:'Stryker',role:'Principal Engineer, Cybersecurity IGA',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Remote; no longer accepting applications'},
+  {co:'Fairly',role:'Systems & Security Engineer',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Portland, OR'},
+  {co:'Duende Software',role:'Senior Technical Account Engineer (Presales & Strategic CS)',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Remote'},
+  {co:'Conviso',role:'Security Engineer',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Washington DC-Baltimore Area (Remote)'},
+  {co:'Pixel Machinery',role:'Senior IT Implementation Technician',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Remote'},
+  {co:'Skylight',role:'Principal or Staff Product Security Engineer',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Remote'},
+  {co:'Brooksource',role:'Transmit Developer',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Remote'},
+  {co:'Accutive Security',role:'Principal Security Engineer',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Remote'},
+  {co:'Identify Security',role:'Senior IAM Engineering Leader',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Miami-Fort Lauderdale Area (On-site)'},
+  {co:'Kforce',role:'Senior Database Administrator',date:'2026-10-17',status:'applied',src:'LinkedIn',notes:'Boca Raton, FL (On-site)'},
+  // Oct 16 (6d ago)
+  {co:'Washington State DOT',role:'Senior Identity and Access Management Engineer',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Olympia, WA; no longer accepting applications'},
+  {co:'Baptist Health',role:'Senior IAM Engineer, Technology and Digital',date:'2026-10-16',status:'interview',src:'LinkedIn',notes:'Florida; interview scheduled (Caroline Dybala)'},
+  {co:'Nova Southeastern University',role:'Identity and Access Management Engineer',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Florida (Hybrid)'},
+  {co:'Providence',role:'Senior Security Engineer IS - IAM (Oregon)',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Oregon (Remote)'},
+  {co:'CBTS',role:'Senior IAM Engineer',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Cincinnati, OH (Hybrid)'},
+  {co:'Nike',role:'Principal Engineer, Identity & Authorization',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Beaverton, OR (On-site)'},
+  {co:'Bird',role:'Senior Security Engineer',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Remote'},
+  {co:'RecruiterForge',role:'Security Engineer (Remote)',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Remote; no longer accepting applications'},
+  {co:'Okta',role:'Senior Technical Account Manager - Key Accounts - Auth0',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Bellevue, WA (Hybrid)'},
+  {co:'Staffingine',role:'SCIM - Identity Support Engineer (Evening Shift)',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Redmond, WA (Hybrid); no longer accepting applications'},
+  {co:'Slack',role:'Senior Software Engineer, Identity Security',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Seattle, WA'},
+  {co:'Simpro Software',role:'Senior IT Security Engineer',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Miami, FL (On-site)'},
+  {co:'Deloitte',role:'Senior IAM Engineer (Ping Identity/CIAM)',date:'2026-10-16',status:'interview',src:'LinkedIn',notes:'Miami, FL (Hybrid); HireVue interview Oct 23'},
+  {co:'Apptoza',role:'Active Directory Admin',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Palm Beach County, FL (On-site); no longer accepting applications'},
+  {co:'Kforce',role:'Manager IAM & Automation',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Fort Lauderdale, FL (On-site)'},
+  {co:'Kforce',role:'Cybersecurity Automation Engineer III',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Fort Lauderdale, FL (On-site)'},
+  {co:'Nucleus Security',role:'Implementation Engineer',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Florida (Remote); no longer accepting applications'},
+  {co:'Kami',role:'Application Security Engineer',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Remote; no longer accepting applications'},
+  {co:'G2 Risk Solutions',role:'Technical Support Engineer',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Remote'},
+  {co:'Ping Identity',role:'Senior Technical Support Engineer',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Remote; no longer accepting applications'},
+  {co:'Preceptor',role:'Senior Security Systems Engineer',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Remote; no longer accepting applications'},
+  {co:'Freedom Financing',role:'Information Technology Engineer',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Remote; no longer accepting applications'},
+  {co:'Innovatus Technology Consulting',role:'IAM Engineer',date:'2026-10-16',status:'applied',src:'LinkedIn'},
+  {co:'Stoke Space Technologies',role:'Security Administrator',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Kent, WA'},
+  // Oct 15 (1w ago)
+  {co:'Peraton',role:'IAM Software Engineer',date:'2026-10-15',status:'applied',src:'LinkedIn',notes:'Remote; no longer accepting applications'},
+  {co:'Rithum',role:'Staff Information Security Engineer - AI First',date:'2026-10-15',status:'applied',src:'LinkedIn',notes:'Remote; no longer accepting applications'},
+  {co:'GOFO',role:'Information Technology Support Engineer',date:'2026-10-15',status:'applied',src:'LinkedIn',notes:'Miami, FL (On-site); application viewed'},
+  {co:'ControlUp',role:'Customer Support Engineer (Tier 1)',date:'2026-10-15',status:'applied',src:'LinkedIn',notes:'Remote; no longer accepting applications'},
+  {co:'Franklin Fitch',role:'Information Technology Support Engineer',date:'2026-10-15',status:'applied',src:'LinkedIn',notes:'Miami, FL (On-site); no longer accepting applications'},
+  {co:'Quanata',role:'Senior Application Security Engineer',date:'2026-10-15',status:'applied',src:'LinkedIn',notes:'Remote'},
+  {co:'ATR',role:'Senior Software Support Engineer',date:'2026-10-15',status:'applied',src:'LinkedIn',notes:'Remote; no longer accepting applications'},
+  {co:'Active Cyber',role:'Senior Okta Engineer',date:'2026-10-15',status:'applied',src:'LinkedIn',notes:'Remote'},
+  {co:'Kforce',role:'Cloud Information Security Engineer',date:'2026-10-15',status:'applied',src:'LinkedIn',notes:'Fort Lauderdale, FL (Hybrid)'},
+  {co:'KPMG',role:'Senior Associate, Saviynt Identity Governance Engineer',date:'2026-10-15',status:'rejected',src:'LinkedIn',notes:'Fort Lauderdale & Miami, FL (Hybrid)'},
+  {co:'Eight Sleep',role:'Security Engineer',date:'2026-10-15',status:'applied',src:'LinkedIn',notes:'Remote'},
+  {co:'Integrated Resources',role:'Security IDaaS Engineer',date:'2026-10-15',status:'applied',src:'LinkedIn',notes:'Remote; application viewed'},
+  {co:'Farmers Insurance',role:'Information Security Lead Specialist (IAM)',date:'2026-10-15',status:'applied',src:'LinkedIn'},
+  {co:'CAF America',role:'Identity and Access Management Technical Lead',date:'2026-10-15',status:'applied',src:'LinkedIn'},
+  {co:'Greenberg Traurig',role:'Identity and Security Engineer',date:'2026-10-15',status:'applied',src:'LinkedIn',notes:'Fort Lauderdale & Miramar, FL (Hybrid)'},
+  {co:'Indium',role:'Product Security Engineer',date:'2026-10-15',status:'applied',src:'LinkedIn',notes:'Seattle, WA (Hybrid); no longer accepting applications'},
+  {co:'Rover.com',role:'Security Analyst',date:'2026-10-15',status:'applied',src:'LinkedIn',notes:'Greater Seattle Area (Hybrid)'},
+  // Oct 8 (2w ago)
+  {co:'Duende Software',role:'Senior Customer Success Engineer',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Remote'},
+  {co:'Confero',role:'Okta Engineer',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Remote; no longer accepting applications'},
+  {co:'Outreach',role:'Staff Software Engineer, Identity and Access Platform',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Seattle, WA (Hybrid)'},
+  {co:'VanderHouwen',role:'IAM Security Architect',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Oregon (Hybrid); no longer accepting applications'},
+  {co:'GEICO',role:'Cyber Security Identity Staff Engineer',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Seattle, WA (On-site)'},
+  {co:'Hampton North',role:'Security Engineer',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Remote; no longer accepting applications'},
+  {co:'Insight Global',role:'IAM Integration Engineer',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Omaha, NE (Remote); no longer accepting applications'},
+  {co:'United Airlines',role:'Engineer – Identity & Access Management',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Chicago, IL (Remote); no longer accepting applications'},
+  {co:'McKesson',role:'Software Engineer – Identity & Access Management',date:'2026-10-08',status:'applied',src:'LinkedIn'},
+  {co:'NOV',role:'Cybersecurity IAM Engineer',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Houston, TX (Hybrid); no longer accepting applications'},
+  {co:'United Airlines',role:'Sr Engineer - Identity Governance & Administration',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Chicago, IL (Remote)'},
+  {co:'Pura Vida Miami',role:'Systems Administrator',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Miami, FL (On-site); no longer accepting applications'},
+  {co:'Greenberg Traurig',role:'Enterprise Systems Administrator',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Miramar, FL (Hybrid)'},
+  {co:'Deloitte',role:'Cyber Identity - CIAM Engineering Manager',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Miami, FL (Hybrid)'},
+  {co:'Deloitte',role:'Cyber Identity - CIAM Senior Engineering Management Specialist',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Miami, FL (Hybrid)'},
+  {co:'Virtu Financial',role:'Information Security Engineer',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Palm Beach County, FL; no longer accepting applications'},
+  {co:'Fortune 500',role:'Business Analyst SSO',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Deerfield Beach, FL (Hybrid); no longer accepting applications'},
+  {co:'Figma',role:'Security Engineer',date:'2026-10-08',status:'applied',src:'LinkedIn'},
+  {co:'SSA Marine',role:'Cybersecurity Engineer',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Seattle, WA (Hybrid)'},
+  {co:'ARB 4x4 Accessories USA',role:'IT Systems Administrator & Infrastructure Generalist',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Auburn, WA (On-site); application viewed'},
+  {co:'INSPYR Solutions',role:'Cybersecurity Automation Engineer III',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Hollywood, FL (Hybrid); no longer accepting applications'},
+  {co:'SPHERE',role:'Systems Engineer – Identity & Access Management',date:'2026-10-08',status:'applied',src:'LinkedIn'},
+  {co:'Robert Half',role:'Automation Engineer - Security',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Seattle, WA (On-site)'},
+  {co:'Valorem Reply',role:'IAM Software Engineer',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Greater Seattle Area (Hybrid)'},
+  {co:'Kforce',role:'IAM Engineer',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Davie, FL (Hybrid)'},
+  {co:'Aquent',role:'Security Engineer (211941)',date:'2026-10-08',status:'applied',src:'LinkedIn',notes:'Redmond, WA (Hybrid); no longer accepting applications'},
+  // Additional LinkedIn entries with "Application viewed" status updates
+  {co:'Leidos',role:'Cybersecurity Engineer',date:'2026-10-20',status:'applied',src:'LinkedIn',notes:'Application viewed per LinkedIn'},
+  {co:'Environmental Science Associates',role:'Cybersecurity Engineer',date:'2026-10-15',status:'applied',src:'LinkedIn',notes:'Resume downloaded per LinkedIn; no longer accepting applications'},
+  {co:'TheraDriver',role:'Technical Support Specialist',date:'2026-10-16',status:'applied',src:'LinkedIn',notes:'Remote'},
+
+  // ── OCT 22 ──
+  {co:'Nubank',role:'Security Engineer',date:'2026-10-22',status:'applied',src:'Greenhouse'},
+  {co:'Bitwarden',role:'Senior Software Engineer (Auth)',date:'2026-10-04',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 22 — role filled'},
+  {co:'Accenture',role:'Security / IAM role',date:'2026-10-22',status:'rejected',src:'Workday',notes:'Rejected Oct 22'},
+  {co:'Black Duck Software',role:'Application Security Engineer (West Coast)',date:'2026-10-08',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 21'},
+  {co:'Vercel',role:'Security Software Engineer, IAM',date:'2026-10-16',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 21'},
+  {co:'Centene',role:'Senior Infrastructure Security Engineer',date:'2026-10-21',status:'rejected',src:'Workday',notes:'Rejected Oct 21'},
+  {co:'Centene',role:'Senior IAM Engineer',date:'2026-10-14',status:'rejected',src:'Workday',notes:'Rejected Oct 14'},
+  {co:'Centene',role:'IAM Analyst II',date:'2026-10-14',status:'rejected',src:'Workday',notes:'Rejected Oct 14 — salary requirements exceed range'},
+  {co:'Centene',role:'Lead IAM Engineer',date:'2026-10-14',status:'rejected',src:'Workday',notes:'Rejected Oct 14 — requirements not met'},
+  {co:'VSE Aviation',role:'Technical Solutions Architect II',date:'2026-10-20',status:'rejected',src:'Paycom',notes:'Application closed as incomplete Oct 20'},
+  {co:'FAU',role:'IT Systems and Support Specialist',date:'2026-10-06',status:'rejected',src:'Workday',notes:'Rejected Oct 20'},
+  {co:'Opal Security',role:'Application Security Engineer',date:'2026-10-17',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 20'},
+  {co:'CVS Health',role:'Senior IAM Engineer - Ping Identity & Directory Services',date:'2026-10-11',status:'rejected',src:'Workday',notes:'Rejected Oct 18 (second application)'},
+  {co:'KPMG',role:'Lead Specialist, Federal ICAM Engineer',date:'2026-10-16',status:'rejected',src:'Avature'},
+  {co:'Runway',role:'Security Engineer',date:'2026-10-16',status:'rejected',src:'Greenhouse'},
+  {co:'BECU',role:'Principal Solutions Engineer',date:'2026-10-16',status:'rejected',src:'Workday'},
+  {co:'BECU',role:'Staff Software Developer - AI Innovation Team',date:'2026-10-16',status:'rejected',src:'Workday'},
+  {co:'Betterment',role:'Sr Engineering Manager - API & Auth Platform',date:'2026-10-05',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 15'},
+  {co:'Salesforce',role:'MTS Software Engineer, Identity & Access Management',date:'2026-10-04',status:'rejected',src:'Workday',notes:'Rejected Oct 15'},
+  {co:'Salesforce',role:'Senior Software Engineer, Identity Security',date:'2026-10-09',status:'rejected',src:'Workday',notes:'Rejected Oct 14'},
+  {co:'Expeditors',role:'Engineer III, Global Technology - IAM',date:'2026-10-13',status:'rejected',src:'SmartRecruiters'},
+  {co:'Cigna Group',role:'Senior CIAM Engineer - Auth0 & Okta',date:'2026-10-11',status:'rejected',src:'Workday',notes:'Rejected Oct 13'},
+  {co:'Booz Allen Hamilton',role:'Identity Engineer',date:'2026-10-11',status:'rejected',src:'Workday',notes:'Rejected Oct 13'},
+  {co:'TopStack Group',role:'Security Engineer (via recruiter)',date:'2026-10-14',status:'rejected',src:'Recruiter',notes:'Greg Zazzarino — role was already filled; Oct 14'},
+  {co:'Concora Credit',role:'Information Security Engineer',date:'2026-10-12',status:'rejected',src:'iCIMS'},
+  {co:'Offchain',role:'Security Engineer',date:'2026-10-10',status:'rejected',src:'Lever'},
+  {co:'Yahoo',role:'Paranoids Endpoint Security Engineer',date:'2026-10-09',status:'rejected',src:'Company Site'},
+  {co:'Prove',role:'Security Engineer',date:'2026-10-07',status:'rejected',src:'Greenhouse'},
+  {co:'Anthropic',role:'Security Engineer, Corporate Security',date:'2026-10-04',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 6'},
+  {co:'Deloitte',role:'IAM Architect - Sailpoint/Okta Senior Consultant',date:'2026-10-05',status:'rejected',src:'Deloitte',notes:'Rejected Oct 5'},
+  // Deloitte — HireVue live video interview Oct 23 @ 9:30AM EDT (contractor Req 78579)
+  {co:'Deloitte',role:'Contractor - Req 78579',date:'2026-10-06',status:'interview',src:'Deloitte',notes:'HireVue live video Oct 23 @ 9:30AM EDT; not recorded'},
+  // F5 — Jordan Bradley (internal recruiter) reached out Oct 22; screen scheduled Monday
+  {co:'F5',role:'Site Reliability Engineer',date:'2026-10-16',status:'screening',src:'Workday',notes:'Jordan Bradley (internal recruiter) reached out Oct 22; screen scheduled Monday'},
+
+  // ── OCT 21 ──
+  {co:'Aon',role:'Identity & Access Management Engineer - PAM',date:'2026-10-21',status:'rejected',src:'iCIMS',notes:'Rejected Oct 21'},
+  {co:'EGAY (Oracle)',role:'Cybersecurity IAM Engineer',date:'2026-10-21',status:'rejected',src:'Workday',notes:'Rejected Oct 21'},
+  {co:'Vercel',role:'Security Engineer',date:'2026-10-21',status:'applied',src:'Lensa'},
+  {co:'Hard Rock Digital',role:'Principal Identity Engineer',date:'2026-10-21',status:'rejected',src:'Company Site',notes:'Rejected Oct 21'},
+  // Helion — Todd Stroh sent "Initial Call" email Oct 21, confirmed for Oct 22 5PM EDT
+  {co:'Helion',role:'Senior Systems Administrator',date:'2026-10-19',status:'screening',src:'Greenhouse',notes:'Recruiter screen w/ Todd Stroh scheduled Oct 22 @ 5PM EDT'},
+  // CVS Health — Derek Tucker called, emailed Oct 21 to schedule 30-min screen
+  {co:'CVS Health',role:'Senior IAM Engineer - Ping Identity & Directory Services',date:'2026-10-09',status:'screening',src:'Workday',notes:'Recruiter Derek Tucker called Oct 21; scheduling 30-min screen'},
+  // Panthalassa — interview invite Oct 20, confirmed Wed Oct 21 @ 8:45AM PDT
+  {co:'Panthalassa',role:'IT IAM Engineer',date:'2026-10-14',status:'interview',src:'Greenhouse',notes:'Robert Grigg; interview Wed Oct 21 @ 8:45AM PDT via Google Meet'},
+  // Baptist Health South Florida — Caroline Dybala; interview scheduled Oct 26 @ 1PM EST (rescheduled from Oct 23)
+  {co:'Baptist Health South Florida',role:'Sr. IAM Engineer',date:'2026-10-20',status:'interview',src:'LinkedIn',notes:'Caroline Dybala; hiring manager interview Mon Oct 26 @ 1PM EST (Zoom)'},
+  // ── OCT 20 ──
+  {co:'Kodex',role:'Security Engineer',date:'2026-10-20',status:'applied',src:'Greenhouse'},
+  {co:'Vercel',role:'Security Software Engineer, Detection & Response',date:'2026-10-20',status:'applied',src:'Greenhouse'},
+  // ── OCT 19 ──
+  {co:'GoDaddy',role:'Senior Security Engineer',date:'2026-10-19',status:'rejected',src:'Company Site'},
+  {co:'Stackline',role:'Security Automation Engineer',date:'2026-10-19',status:'rejected',src:'Greenhouse'},
+  {co:'Compass',role:'Senior Security Engineer - Enterprise',date:'2026-10-19',status:'applied',src:'Company Site'},
+  {co:'College Board',role:'Workforce IAM Engineer',date:'2026-10-19',status:'applied',src:'Workday'},
+  {co:'General Matter',role:'Security Engineer',date:'2026-10-19',status:'applied',src:'Greenhouse'},
+  {co:'Allstate',role:'Security Engineer',date:'2026-10-19',status:'applied',src:'Workday'},
+  {co:'Strata Information Group',role:'Security Engineer',date:'2026-10-19',status:'applied',src:'Greenhouse'},
+  {co:'Fluidstack',role:'Security Engineer, Corp IT',date:'2026-10-19',status:'applied',src:'Greenhouse'},
+  {co:'Fluidstack',role:'General Application',date:'2026-10-19',status:'applied',src:'Greenhouse'},
+  {co:'Cyera',role:'Senior Support Engineer, Identity Security',date:'2026-10-19',status:'applied',src:'Company Site'},
+  {co:'Veralto',role:'Senior Identity Engineer',date:'2026-10-19',status:'applied',src:'Workday'},
+  {co:'Baselayer',role:'Security Engineer',date:'2026-10-19',status:'applied',src:'Greenhouse'},
+  {co:'CHAOS Industries',role:'Security Engineer',date:'2026-10-19',status:'applied',src:'Greenhouse'},
+  {co:'Flowdesk',role:'Security Engineer',date:'2026-10-19',status:'applied',src:'Greenhouse'},
+  {co:'Spektrum',role:'Senior Engineer - Identity and Access Management',date:'2026-10-19',status:'applied',src:'Company Site'},
+  {co:'Domino',role:'Security Engineer',date:'2026-10-19',status:'applied',src:'Greenhouse'},
+  {co:'K Health',role:'Security Engineer',date:'2026-10-19',status:'applied',src:'Company Site'},
+  {co:'Orkes',role:'Security Engineer',date:'2026-10-19',status:'applied',src:'Greenhouse'},
+  {co:'Muon Space',role:'Security Engineer',date:'2026-10-19',status:'applied',src:'Greenhouse'},
+  // Premier America CU — Penny Specter HR phone screen occurred; offer anticipated per Oct 19 email
+  {co:'Premier America Credit Union',role:'Security Engineer',date:'2026-10-19',status:'screening',src:'Workday',notes:'HR screen w/ Penny Specter done; offer anticipated per recruiter Oct 19'},
+  // ── OCT 17 ──
+  {co:'Opal Security',role:'Application Security Engineer',date:'2026-10-17',status:'applied',src:'Greenhouse'},
+  // ── OCT 16 ──
+  {co:'TBC Corporation',role:'Senior Integration Developer - API Platform',date:'2026-10-16',status:'applied',src:'SuccessFactors'},
+  {co:'Blue Origin',role:'Senior Cybersecurity Engineer',date:'2026-10-16',status:'applied',src:'Workday'},
+  {co:'TIAA',role:'Lead Info Sec Ops Specialist - IAM Unix Specialist',date:'2026-10-16',status:'applied',src:'Workday'},
+  {co:'TIAA',role:'Lead Dev Ops IAM Specialist - PAM',date:'2026-10-16',status:'applied',src:'Workday'},
+  {co:'TBC Corporation',role:'Information Security Engineer',date:'2026-10-16',status:'applied',src:'SuccessFactors'},
+  {co:'F5',role:'SRE II - Identity and Access Management',date:'2026-10-16',status:'applied',src:'Workday'},
+  {co:'People Culture Talent',role:'Security Engineer (via agency)',date:'2026-10-16',status:'applied',src:'Greenhouse'},
+  {co:'UnCruise Adventures',role:'Solutions Engineer',date:'2026-10-16',status:'applied',src:'Greenhouse'},
+  {co:'Littler Mendelson',role:'Sr. Cybersecurity Automation Engineer',date:'2026-10-16',status:'applied',src:'Company Site'},
+  {co:'Vercel',role:'Security Software Engineer, IAM',date:'2026-10-16',status:'applied',src:'Greenhouse'},
+  {co:'Neuralink',role:'Security Engineer',date:'2026-10-16',status:'applied',src:'Greenhouse'},
+  {co:'UKG',role:'Sr. Staff IAM Architect',date:'2026-10-16',status:'applied',src:'Company Site'},
+  {co:'UKG',role:'Sr. Staff Security Analyst - Incident Commander',date:'2026-10-16',status:'applied',src:'Company Site'},
+  {co:'UKG',role:'Staff Information Security Engineer',date:'2026-10-16',status:'applied',src:'Company Site'},
+  {co:'Beyond Finance',role:'Security Engineer',date:'2026-10-16',status:'applied',src:'Company Site'},
+  {co:'Riot Platforms',role:'Senior Engineer, Identity & Access Management',date:'2026-10-16',status:'applied',src:'Rippling ATS'},
+  {co:'Microsoft',role:'Security Engineer',date:'2026-10-16',status:'applied',src:'Company Site'},
+  {co:'Microsoft',role:'AI Security Engineer',date:'2026-10-16',status:'applied',src:'Company Site'},
+  {co:'Microsoft',role:'Senior Security Engineer - Development',date:'2026-10-16',status:'applied',src:'Company Site'},
+  {co:'Microsoft',role:'Digital Security Engineer',date:'2026-10-16',status:'applied',src:'Company Site'},
+  {co:'Microsoft',role:'Senior/Principal Security Engineer (Services)',date:'2026-10-16',status:'applied',src:'Company Site'},
+  // ── OCT 15 ──
+  {co:'JobGether',role:'Senior Customer Success Engineer',date:'2026-10-15',status:'applied',src:'JobGether'},
+  {co:'Leidos',role:'IAM Cyber Engineer',date:'2026-10-15',status:'applied',src:'Workday'},
+  {co:'Washington Health Benefit Exchange',role:'Senior Identity Engineer',date:'2026-10-15',status:'applied',src:'ADP'},
+  {co:'CoreWeave',role:'Senior Software Engineer, IAM',date:'2026-10-15',status:'applied',src:'Greenhouse'},
+  {co:'Flexport',role:'Senior Systems Engineer (Identity and Access)',date:'2026-10-15',status:'applied',src:'Greenhouse'},
+  // ── OCT 14 ──
+  {co:'HeyGen',role:'Security Engineer',date:'2026-10-14',status:'applied',src:'Greenhouse'},
+  {co:'Eudia',role:'Security Engineer',date:'2026-10-14',status:'applied',src:'Greenhouse'},
+  {co:'CHAOS Industries',role:'Security Engineer',date:'2026-10-14',status:'applied',src:'Greenhouse'},
+  {co:'Figure',role:'Security Engineer',date:'2026-10-14',status:'applied',src:'Greenhouse'},
+  {co:'Florida Atlantic University',role:'Identity Management Engineer, Senior',date:'2026-10-14',status:'applied',src:'Workday'},
+  {co:'Imagine Pediatrics',role:'Security Engineer',date:'2026-10-14',status:'hold',src:'Greenhouse',notes:'Role placed on hold per company Oct 14'},
+  {co:'Delinea',role:'Staff Security Engineer',date:'2026-10-14',status:'rejected',src:'Greenhouse'},
+  {co:'Stripe',role:'Software Engineer, Internal Identity',date:'2026-10-14',status:'rejected',src:'Company Site'},
+  {co:'Aquent | Skill',role:'Systems Software Engineer',date:'2026-10-05',status:'applied',src:'LinkedIn',notes:'256–265 candidates; still reviewing as of Oct 14'},
+  {co:'KeyData Cyber',role:'Okta Architect (Contract)',date:'2026-10-14',status:'rejected',src:'Greenhouse'},
+  // ── OCT 13 ──
+  {co:'Nadia Care',role:'Security Engineer',date:'2026-10-13',status:'applied',src:'Greenhouse'},
+  {co:'Aon',role:'Identity & Access Management Engineer - PAM',date:'2026-10-13',status:'rejected',src:'iCIMS',notes:'Rejected (second application same role)'},
+  // BHSG / Lucia Lombardo — phone screen completed Oct 13; resume submitted
+  {co:'BHSGroup',role:'Security Engineer',date:'2026-10-13',status:'screening',src:'Recruiter',notes:'Lucia Lombardo (BHSG); phone screen done Oct 13; resume submitted'},
+  // ── OCT 12 ──
+  {co:'Gradial',role:'Principal Security Engineer, Product & Platform',date:'2026-10-04',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 12'},
+  {co:'Affirm',role:'Staff CIAM Software Engineer',date:'2026-10-12',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 12'},
+  // ── OCT 11 ──
+  {co:'Equifax',role:'Security Engineer',date:'2026-10-11',status:'applied',src:'Company Site'},
+  {co:'CVS Health',role:'Senior IAM Engineer - Ping Identity & Directory Services',date:'2026-10-11',status:'applied',src:'TheLadders'},
+  {co:'Booz Allen Hamilton',role:'Identity Engineer',date:'2026-10-11',status:'applied',src:'Workday'},
+  {co:'Delinea',role:'Staff Product Security Engineer',date:'2026-10-11',status:'applied',src:'Greenhouse'},
+  {co:'PACCAR',role:'Application Security Engineer',date:'2026-10-11',status:'applied',src:'Company Site'},
+  {co:'Environmental Science Associates',role:'Cybersecurity Engineer',date:'2026-10-11',status:'applied',src:'Greenhouse'},
+  {co:'JobGether',role:'IAM Engineer (Remote)',date:'2026-10-11',status:'applied',src:'JobGether'},
+  {co:'Cigna Group',role:'Senior CIAM Engineer - Auth0 & Okta',date:'2026-10-11',status:'applied',src:'Workday'},
+  {co:'CoreWeave',role:'Senior Security Engineer, Enterprise Security',date:'2026-10-11',status:'applied',src:'Greenhouse'},
+  {co:'General Matter',role:'Security Engineer',date:'2026-10-11',status:'applied',src:'Greenhouse'},
+  {co:'Overstory',role:'Security Engineer',date:'2026-10-11',status:'applied',src:'Company Site'},
+  {co:'SpaceX',role:'Security Engineer (Software)',date:'2026-10-11',status:'applied',src:'Company Site'},
+  // ── OCT 10 ──
+  {co:'K2 Space',role:'Senior Security Engineer, IAM',date:'2026-10-08',status:'applied',src:'Greenhouse'},
+  {co:'FanDuel',role:'Senior IAM Engineer',date:'2026-10-05',status:'rejected',src:'Greenhouse',notes:'Role filled; notified Oct 10'},
+  // ── OCT 9 ──
+  {co:'Cala Health',role:'Security Engineer',date:'2026-10-09',status:'applied',src:'Greenhouse'},
+  {co:'Beyond Finance',role:'Security Engineer',date:'2026-10-09',status:'applied',src:'Company Site'},
+  {co:'CoreWeave',role:'Senior Software Engineer, IAM',date:'2026-10-09',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 9'},
+  {co:'Healthmark Group',role:'Senior Security Engineer',date:'2026-10-09',status:'applied',src:'ADP'},
+  {co:'Postman',role:'Software Engineer, IAM',date:'2026-10-09',status:'rejected',src:'Workday'},
+  {co:'Mastercard',role:'Director, Product Management',date:'2026-10-09',status:'applied',src:'Workday'},
+  {co:'Parmesoft',role:'Ping Identity SME (PingFederate/PingAccess/PingOne)',date:'2026-10-09',status:'applied',src:'Dice'},
+  {co:'Gemini',role:'Senior Platform Security Engineer',date:'2026-10-09',status:'applied',src:'Company Site'},
+  {co:'Okta',role:'Security Engineer',date:'2026-10-09',status:'applied',src:'Company Site'},
+  {co:'Smartsheet',role:'Security Engineer',date:'2026-10-09',status:'applied',src:'Greenhouse'},
+  {co:'Twitch',role:'Security Engineer',date:'2026-10-09',status:'applied',src:'Greenhouse'},
+  {co:'Salesforce',role:'Senior Software Engineer, Identity Security',date:'2026-10-09',status:'applied',src:'Workday'},
+  // Infosys — offer received Oct 21 (Infrastructure Consultant / Ping Developer via Avance Services)
+  // Full thread: Avance cold outreach Oct 5 → RTR signed → interview Oct 6 → Infosys form Oct 9 → interview → OFFER
+  {co:'Infosys',role:'Infrastructure Consultant (Ping Developer)',date:'2026-10-05',status:'offer',src:'Recruiter',notes:'Via Avance Services (Shameem Shaik/Nagesh K); offer received Oct 21; negotiating relocation to Tempe AZ; Kalyani calling Oct 22 @ 12PM CT'},
+  // ── OCT 8 ──
+  {co:'Deepgram',role:'Security Engineer',date:'2026-10-08',status:'applied',src:'Greenhouse'},
+  {co:'Robert Half',role:'Digital Identity Senior Engineer',date:'2026-10-08',status:'applied',src:'Workday'},
+  {co:'New Relic',role:'Software Engineer - IAM (Java)',date:'2026-10-05',status:'rejected',src:'Company Site',notes:'Rejected Oct 8'},
+  {co:'SilverSky',role:'Identity Security Engineer (Duo Security)',date:'2026-10-08',status:'applied',src:'Greenhouse'},
+  {co:'Loenbro',role:'Security Engineer',date:'2026-10-08',status:'applied',src:'Greenhouse'},
+  {co:'Black Duck Software',role:'Application Security Engineer (West Coast)',date:'2026-10-08',status:'applied',src:'Greenhouse'},
+  {co:'Ping Identity',role:'Security Engineer',date:'2026-10-08',status:'applied',src:'Greenhouse'},
+  {co:'Stoke Space',role:'Security Administrator',date:'2026-10-08',status:'applied',src:'Greenhouse'},
+  {co:'K2 Space',role:'Senior Security Engineer, IAM',date:'2026-10-08',status:'applied',src:'Greenhouse'},
+  {co:'Recursion',role:'Staff Engineer, Identity & Access Management',date:'2026-10-08',status:'applied',src:'Greenhouse'},
+  {co:'Palyrian',role:'Security Engineer',date:'2026-10-08',status:'applied',src:'Greenhouse'},
+  {co:'KeyData Cyber',role:'Okta Architect (Contract)',date:'2026-10-08',status:'applied',src:'Greenhouse'},
+  {co:'Imagine Pediatrics',role:'Security Engineer',date:'2026-10-08',status:'hold',src:'Greenhouse',notes:'Role placed on hold (first application)'},
+  {co:'Censys',role:'Security Engineer',date:'2026-10-08',status:'applied',src:'Greenhouse'},
+  {co:'Ziply Fiber',role:'Security Engineer',date:'2026-10-08',status:'applied',src:'Zoho Recruit'},
+  {co:'Healthmark Group',role:'Senior Security Engineer',date:'2026-10-08',status:'applied',src:'ADP'},
+  {co:'JobGether',role:'Workforce IAM Engineer',date:'2026-10-08',status:'applied',src:'JobGether'},
+  {co:'Concept Plus',role:'Security Engineer',date:'2026-10-08',status:'applied',src:'Rippling ATS'},
+  {co:'Strata Information Group',role:'Security Engineer',date:'2026-10-08',status:'applied',src:'Greenhouse'},
+  {co:'SpecterOps',role:'Security Engineer',date:'2026-10-08',status:'applied',src:'Greenhouse'},
+  {co:'People Culture Talent',role:'Security Engineer (via agency)',date:'2026-10-08',status:'applied',src:'Greenhouse'},
+  {co:'F5',role:'Senior Identity Engineer, Workforce Identity',date:'2026-10-08',status:'applied',src:'Workday'},
+  {co:'ADP',role:'Director, Privileged Access Management',date:'2026-10-08',status:'rejected',src:'ADP',notes:'Rejected Oct 8 per email'},
+  {co:'CareOregon',role:'IS Security Engineer II',date:'2026-10-07',status:'rejected',src:'Workday',notes:'Rejected Oct 8'},
+  // ── OCT 7 ──
+  {co:'CareOregon',role:'IS Security Engineer II',date:'2026-10-07',status:'rejected',src:'Workday'},
+  {co:'Oddball',role:'Security Engineer',date:'2026-10-07',status:'applied',src:'Greenhouse'},
+  {co:'Vibrant Emotional Health',role:'IAM Analyst I',date:'2026-10-07',status:'applied',src:'Workday'},
+  {co:'TopDog Law',role:'IT Security Systems Administrator',date:'2026-10-07',status:'applied',src:'Rippling ATS'},
+  {co:'KeyData Cyber',role:'AWS Identity Security Engineer (Contract)',date:'2026-10-07',status:'rejected',src:'Greenhouse',notes:'Role update/rejection Oct 7'},
+  {co:'Providence',role:'Senior Security Engineer IS - IAM (Remote)',date:'2026-10-07',status:'screening',src:'Company Site',notes:'Self-paced text interview invite Oct 7 via ModernHire'},
+  {co:'Providence',role:'Service Engineer II IS (Remote)',date:'2026-10-06',status:'screening',src:'Company Site',notes:'Self-paced text interview invite Oct 6 via ModernHire'},
+  // W.R. Berkley — via Insight Global (Max Trembly/Anthony Rosano); first round interview Oct 7 @ 2:30PM EST
+  {co:'W.R. Berkley',role:'Security Engineer',date:'2026-10-05',status:'interview',src:'Recruiter',notes:'Via Insight Global (Max Trembly); first round Oct 7 @ 2:30PM EST; $155K–$170K'},
+  // ── OCT 6 ──
+  {co:'Roku',role:'Senior Identity Access Management Engineer',date:'2026-10-06',status:'rejected',src:'Company Site',notes:'Rejected Oct 6'},
+  {co:'Concept Plus',role:'Security Engineer',date:'2026-10-06',status:'applied',src:'Rippling ATS'},
+  {co:'Keeper Security',role:'Security Engineer',date:'2026-10-06',status:'applied',src:'Company Site'},
+  {co:'Seaboard Marine',role:'Development Security & Operations Engineer',date:'2026-10-06',status:'applied',src:'Jobvite'},
+  {co:'Nova Southeastern University',role:'Identity and Access Management Engineer',date:'2026-10-06',status:'applied',src:'PageUp'},
+  {co:'Stripe',role:'Security Engineer',date:'2026-10-06',status:'rejected',src:'Company Site',notes:'Rejected Oct 6'},
+  {co:'Aurora',role:'Staff Application Security Engineer',date:'2026-10-06',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 6 (after review)'},
+  {co:'Deloitte',role:'Microsoft Identity Entra ID Senior Consultant',date:'2026-10-06',status:'applied',src:'Deloitte'},
+  {co:'EY',role:'Cyber - Enterprise Security Architect - Senior',date:'2026-10-06',status:'applied',src:'EY'},
+  {co:'Florida Atlantic University',role:'IT Systems and Support Specialist',date:'2026-10-06',status:'applied',src:'Workday'},
+  {co:'Metropolis',role:'Senior Security Engineer, Product & Application Security',date:'2026-10-06',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 6'},
+  {co:'Tenable',role:'Senior Okta Engineer',date:'2026-10-06',status:'applied',src:'Greenhouse'},
+  {co:'American Express',role:'Java/JavaScript/RESTful API/Cyber Security Engineer',date:'2026-10-06',status:'applied',src:'Company Site'},
+  {co:'Providence',role:'Service Engineer II IS (Remote)',date:'2026-10-06',status:'applied',src:'Company Site'},
+  {co:'Highmark Health',role:'Identity Access Management Security Engineer',date:'2026-10-05',status:'applied',src:'Workday'},
+  {co:'Stackline',role:'Security Automation Engineer',date:'2026-10-05',status:'applied',src:'Greenhouse'},
+  // ── OCT 5 ──
+  {co:'Hard Rock Digital',role:'Principal Identity Engineer',date:'2026-10-05',status:'rejected',src:'Recruitee',notes:'Rejected Oct 21 (original application Oct 5)'},
+  {co:'Auger',role:'Security Engineer',date:'2026-10-05',status:'applied',src:'Company Site'},
+  {co:'Ramp',role:'Security Engineer',date:'2026-10-05',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 5'},
+  {co:'OpenAI',role:'Security Engineer',date:'2026-10-05',status:'applied',src:'Company Site'},
+  {co:'Starbucks',role:'Security Engineer',date:'2026-10-05',status:'applied',src:'Company Site'},
+  {co:'Affirm',role:'Senior CIAM Software Engineer',date:'2026-10-05',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 5'},
+  {co:'Compass',role:'Staff Security Engineer, Product Security and Architecture',date:'2026-10-05',status:'applied',src:'Company Site'},
+  {co:'CoreWeave',role:'Senior Software Engineer, IAM',date:'2026-10-05',status:'applied',src:'Greenhouse'},
+  {co:'CoreWeave',role:'Staff Software Engineer, IAM',date:'2026-10-05',status:'applied',src:'Greenhouse'},
+  {co:'Parmesoft',role:'Ping Identity SME (PingFederate/PingAccess/PingOne)',date:'2026-10-05',status:'applied',src:'Dice'},
+  {co:'Everforth',role:'IAM Security Architect',date:'2026-10-05',status:'applied',src:'Dice'},
+  {co:'Everforth',role:'Okta Engineering Lead',date:'2026-10-05',status:'applied',src:'Dice'},
+  {co:'Drevol LLC',role:'IAM/Okta Engineer (Malvern, PA - Hybrid)',date:'2026-10-05',status:'applied',src:'Dice'},
+  {co:'Drevol LLC',role:'OKTA Expert',date:'2026-10-05',status:'applied',src:'Dice'},
+  {co:'EquipmentShare',role:'Okta Administrator',date:'2026-10-05',status:'applied',src:'Greenhouse'},
+  {co:'Betterment',role:'Sr Engineering Manager - API & Auth Platform',date:'2026-10-05',status:'applied',src:'Greenhouse'},
+  {co:'Coalition',role:'Staff Software Engineer, Auth/Accounts',date:'2026-10-05',status:'applied',src:'Company Site'},
+  {co:'KeyData Cyber',role:'AWS Identity Security Engineer (Contract)',date:'2026-10-05',status:'applied',src:'Greenhouse'},
+  {co:'KeyData Cyber',role:'Okta Technical Consultant (OCI/OWI) (Contract)',date:'2026-10-05',status:'applied',src:'Greenhouse'},
+  {co:'Prove',role:'Security Engineer',date:'2026-10-05',status:'applied',src:'Greenhouse'},
+  {co:'Kaseya',role:'Technical Support Engineer',date:'2026-10-05',status:'applied',src:'Greenhouse'},
+  {co:'Nametag',role:'Technical Customer Engineer (Product Support)',date:'2026-10-05',status:'applied',src:'Greenhouse'},
+  {co:'New Relic',role:'Software Engineer - IAM (Java)',date:'2026-10-05',status:'rejected',src:'Company Site',notes:'Rejected Oct 8'},
+  {co:'FanDuel',role:'Senior IAM Engineer',date:'2026-10-05',status:'rejected',src:'Greenhouse',notes:'Role filled; notified Oct 10'},
+  {co:'Palyrian',role:'Security Engineer',date:'2026-10-05',status:'applied',src:'Greenhouse'},
+  // ── OCT 4 ──
+  {co:'Bitwarden',role:'Senior Software Engineer (Auth)',date:'2026-10-04',status:'applied',src:'Greenhouse'},
+  {co:'Affirm',role:'Senior CIAM Software Engineer',date:'2026-10-04',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 5'},
+  {co:'Gradial',role:'Principal Security Engineer, Product & Platform',date:'2026-10-04',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 12'},
+  {co:'Tenable',role:'Senior Okta Engineer',date:'2026-10-04',status:'applied',src:'Greenhouse'},
+  {co:'CoreWeave',role:'Staff Software Engineer, IAM',date:'2026-10-04',status:'applied',src:'Greenhouse'},
+  {co:'Palyrian',role:'Security Engineer',date:'2026-10-04',status:'applied',src:'Greenhouse'},
+  {co:'SpaceX',role:'Security Engineer (Software)',date:'2026-10-04',status:'applied',src:'Company Site'},
+  {co:'Salesforce',role:'MTS Software Engineer, Identity & Access Management',date:'2026-10-04',status:'applied',src:'Workday'},
+  {co:'Amazon',role:'Software Dev Engineer - AWS IAM Propagation',date:'2026-10-04',status:'applied',src:'Amazon Jobs'},
+  {co:'Amazon',role:'Security Engineer II - Ads Security',date:'2026-10-04',status:'applied',src:'Amazon Jobs'},
+  {co:'Amazon',role:'Security Engineer I - AWS Security Incident Response',date:'2026-10-04',status:'applied',src:'Amazon Jobs'},
+  {co:'Snowflake',role:'Senior Software Engineer - Security Foundations',date:'2026-10-04',status:'applied',src:'Greenhouse'},
+  {co:'Uber',role:'Staff Security Engineer',date:'2026-10-04',status:'applied',src:'Company Site'},
+  {co:'Databricks',role:'Staff Software Engineer - IAM',date:'2026-10-04',status:'applied',src:'Greenhouse'},
+  {co:'Anthropic',role:'Security Engineer, Corporate Security',date:'2026-10-04',status:'applied',src:'Greenhouse'},
+  // ── OCT 2 ──
+  {co:'Compunnel',role:'Senior Architect/Engineer - Microsoft Entra IAM - Security',date:'2026-10-02',status:'applied',src:'Dice'},
+  {co:'Amazon',role:'Software Development Engineer - Identity Services',date:'2026-10-02',status:'applied',src:'Amazon Jobs'},
+  {co:'Amazon',role:'Front End Engineer - IAM Console Team',date:'2026-10-02',status:'applied',src:'Amazon Jobs'},
+  {co:'Amazon',role:'Security Engineer - Identity and Access Management',date:'2026-10-02',status:'applied',src:'Amazon Jobs'},
+  {co:'Robert Half',role:'Identity Management Solutions Engineer',date:'2026-10-02',status:'applied',src:'Dice'},
+  {co:'TalTeam',role:'IAM Security Architect / Information Security Architect - IAM/PAM',date:'2026-10-02',status:'applied',src:'Dice'},
+  {co:'Ramp',role:'Security Engineer, Cloud',date:'2026-10-02',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 5'},
+  {co:'Opendoor',role:'Security Engineer',date:'2026-10-02',status:'applied',src:'Rippling ATS'},
+  {co:'Opendoor',role:'Security Engineer (second role)',date:'2026-10-02',status:'applied',src:'Rippling ATS'},
+  {co:'Deloitte',role:'Cyber Identity - CIAM Security Engineer/Consultant',date:'2026-10-02',status:'interview',src:'Deloitte',notes:'HireVue live video interview Oct 23 @ 9:30AM EDT'},
+
+  // ── OCT 3 ──
+  {co:'Steelcase',role:'Senior Identity Management Engineer',date:'2026-10-03',status:'applied',src:'SmartRecruiters'},
+  {co:'Aurora',role:'Staff Application Security Engineer',date:'2026-10-03',status:'rejected',src:'Greenhouse',notes:'Rejected Oct 6'},
+  {co:'D&H Distributing',role:'IAM Cybersecurity Engineer',date:'2026-10-03',status:'applied',src:'Company Site'},
+  {co:'ADP',role:'Director, Privileged Access Management',date:'2026-10-03',status:'rejected',src:'ADP',notes:'Rejected Oct 8'},
+  {co:'Tanium',role:'Staff Identity and Access Management Engineer',date:'2026-10-03',status:'applied',src:'Greenhouse'},
+  {co:'AlphaSense',role:'Staff Software Engineer, Identity & Access Management',date:'2026-10-03',status:'applied',src:'Greenhouse'},
+  {co:'Brex',role:'Security Engineer',date:'2026-10-03',status:'applied',src:'Company Site'},
+  {co:'Crunchyroll',role:'Security Engineer',date:'2026-10-03',status:'applied',src:'Greenhouse'},
+  {co:'Roku',role:'Senior Identity Access Management Engineer',date:'2026-10-03',status:'rejected',src:'Company Site',notes:'Rejected Oct 6'},
+  {co:'Valar Atomics',role:'Security Engineer',date:'2026-10-03',status:'applied',src:'Greenhouse'},
+];
+
+const SEED_VERSION = 7;
+if (false) { // seed moved inside async IIFE below
+if (false) {
+  // Use stable IDs so row onclicks survive page reloads
+  function stableId(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) { h = Math.imul(31, h) + str.charCodeAt(i) | 0; }
+    return 's' + Math.abs(h).toString(36);
+  }
+  D.apps = SEED.map(s => ({
+    id: stableId(s.co + s.role + s.date), co: s.co, role: s.role, date: s.date,
+    status: s.status, src: s.src || 'Other',
+    link: '', notes: s.notes || '', created: Date.now()
+  }));
+  D.interviews = [
+    {id:stableId('CVS Health Recruiter Screen 2026-10-27'),co:'CVS Health',round:'Recruiter Screen',date:'2026-10-27T14:30',people:'Derek Tucker',notes:'Senior IAM Engineer - Ping Identity & Directory Services',created:Date.now()},
+    {id:stableId('Baptist Health South Florida Hiring Manager 2026-10-26T13:00'),co:'Baptist Health South Florida',round:'Hiring Manager',date:'2026-10-26T13:00',people:'Caroline Dybala (recruiter)',notes:'Zoom; Sr IAM Engineer; rescheduled from Oct 23',created:Date.now()},
+    {id:stableId('Deloitte Technical Screen 2026-10-23T09:30'),co:'Deloitte',round:'Technical Screen',date:'2026-10-23T09:30',people:'HireVue (live video, not recorded)',notes:'Contractor Req 78579; CIAM Security Engineer/Consultant',created:Date.now()},
+    {id:stableId('F5 Recruiter Screen 2026-10-26T00:00'),co:'F5',round:'Recruiter Screen',date:'2026-10-26T00:00',people:'Jordan Bradley (internal recruiter)',notes:'SRE II - Site Reliability Engineer; scheduled Mon Oct 26',created:Date.now()},
+    {id:stableId('Panthalassa Technical Screen 2026-10-21T08:45'),co:'Panthalassa',round:'Technical Screen',date:'2026-10-21T08:45',people:'Robert Grigg',notes:'IT IAM Engineer; interview occurred Oct 21',created:Date.now()},
+    {id:stableId('W.R. Berkley Hiring Manager 2026-10-07T14:30'),co:'W.R. Berkley',round:'Hiring Manager',date:'2026-10-07T14:30',people:'Buster (HM); via Max Trembly & Anthony Rosano (Insight Global)',notes:'Security Engineer; Remote W2; $155K–$170K/yr',created:Date.now()},
+    {id:stableId('Infosys Offer Discussion 2026-10-22T12:00'),co:'Infosys',round:'Offer Discussion',date:'2026-10-22T12:00',people:'Kalyani (Infosys); Nagesh K & Shameem Shaik (Avance)',notes:'Offer in hand; discussing relocation to Tempe AZ',created:Date.now()},
+    {id:stableId('Providence Technical Screen 2026-10-07T00:00'),co:'Providence',round:'Technical Screen',date:'2026-10-07T00:00',people:'ModernHire (self-paced)',notes:'Senior Security Engineer IS - IAM (Remote)',created:Date.now()},
+    {id:stableId('Providence Technical Screen 2026-10-06T00:00'),co:'Providence',round:'Technical Screen',date:'2026-10-06T00:00',people:'ModernHire (self-paced)',notes:'Service Engineer II IS (Remote)',created:Date.now()},
+    {id:stableId('Helion Recruiter Screen 2026-10-22T17:00'),co:'Helion',round:'Recruiter Screen',date:'2026-10-22T17:00',people:'Todd Stroh',notes:'Senior Systems Administrator',created:Date.now()},
+  ];
+  D.recruiters = [
+    {id:stableId('Derek Tucker CVS Health 2026-10-21'),name:'Derek Tucker',co:'CVS Health',channel:'Phone / Cold Call',date:'2026-10-21',roles:'Senior IAM Engineer - Ping Identity & Directory Services',status:'call-scheduled',notes:'Screen Tue Oct 27 2:30PM',created:Date.now()},
+    {id:stableId('Dwayne Webster Hyundai Autoever America 2026-10-22'),name:'Dwayne Webster',co:'Hyundai Autoever America',channel:'Email',date:'2026-10-22',roles:'Engineering Systems Administrator - IAM',status:'call-scheduled',notes:'Reached out for availability',created:Date.now()},
+    {id:stableId('Caroline Dybala Baptist Health South Florida 2026-10-20'),name:'Caroline Dybala',co:'Baptist Health South Florida',channel:'Email',date:'2026-10-20',roles:'Sr. IAM Engineer',status:'call-scheduled',notes:'Interview Mon Oct 26 1PM EST (Zoom)',created:Date.now()},
+    {id:stableId('Jordan Bradley F5 (internal recruiter) 2026-10-22'),name:'Jordan Bradley',co:'F5 (internal recruiter)',channel:'Email',date:'2026-10-22',roles:'Site Reliability Engineer (SRE II - IAM)',status:'call-scheduled',notes:'Screen scheduled Mon Oct 26',created:Date.now()},
+    {id:stableId('Todd Stroh Helion Energy 2026-10-21'),name:'Todd Stroh',co:'Helion Energy',channel:'Email',date:'2026-10-21',roles:'Senior Systems Administrator',status:'call-scheduled',notes:'Screen Oct 22 5PM EDT',created:Date.now()},
+    {id:stableId('Shameem Shaik / Nagesh K Avance Services (Infosys client) 2026-10-05'),name:'Shameem Shaik / Nagesh K',co:'Avance Services (Infosys client)',channel:'Email',date:'2026-10-05',roles:'Ping Developer / Infrastructure Consultant',status:'pursuing',notes:'OFFER received Oct 21; negotiating relocation to Tempe AZ',created:Date.now()},
+    {id:stableId('Robert Grigg Panthalassa 2026-10-14'),name:'Robert Grigg',co:'Panthalassa',channel:'Email',date:'2026-10-14',roles:'IT IAM Engineer',status:'pursuing',notes:'Interview Oct 21',created:Date.now()},
+    {id:stableId('Penny Specter Premier America Credit Union 2026-10-19'),name:'Penny Specter',co:'Premier America Credit Union',channel:'Phone / Cold Call',date:'2026-10-19',roles:'Security Engineer',status:'pursuing',notes:'HR screen done; offer anticipated',created:Date.now()},
+    {id:stableId('Lucia Lombardo BHSGroup 2026-10-13'),name:'Lucia Lombardo',co:'BHSGroup',channel:'Phone / Cold Call',date:'2026-10-13',roles:'Security Engineer',status:'pursuing',notes:'Phone screen Oct 13; resume submitted',created:Date.now()},
+    {id:stableId('Max Trembly / Anthony Rosano Insight Global (W.R. Berkley) 2026-10-05'),name:'Max Trembly / Anthony Rosano',co:'Insight Global (W.R. Berkley)',channel:'Email',date:'2026-10-05',roles:'Security Engineer',status:'pursuing',notes:'First round Oct 7; W2 $155K–$170K',created:Date.now()},
+    {id:stableId('Ujjwal Yadav RulesIQ 2026-10-21'),name:'Ujjwal Yadav',co:'RulesIQ',channel:'Email',date:'2026-10-21',roles:'(role TBD)',status:'pursuing',notes:'Rate/RTR confirmed Oct 21',created:Date.now()},
+    {id:stableId('Hima Bindu / Udi RulesIQ 2026-10-22'),name:'Hima Bindu / Udi',co:'RulesIQ',channel:'Email',date:'2026-10-22',roles:'Same role as Ujjwal Yadav outreach',status:'new',notes:'Duplicate outreach; RTR already confirmed with Ujjwal',created:Date.now()},
+    {id:stableId('Sumit Kumar (unknown) 2026-10-22'),name:'Sumit Kumar',co:'(unknown)',channel:'Email',date:'2026-10-22',roles:'Sr. CIAM / Auth0 Developer (Urgent)',status:'new',notes:'Urgent need outreach Oct 22',created:Date.now()},
+    {id:stableId('Vikas Patel (unknown) 2026-10-22'),name:'Vikas Patel',co:'(unknown)',channel:'Email',date:'2026-10-22',roles:'Software Engineer – Access Security & Production Support',status:'new',notes:'Salary confirmation email Oct 22',created:Date.now()},
+    {id:stableId('Shane Boatwright CGC Group 2026-10-22'),name:'Shane Boatwright',co:'CGC Group',channel:'Email',date:'2026-10-22',roles:'Senior PKI Engineer (Hybrid - Miami, FL)',status:'new',notes:'Via Indeed',created:Date.now()},
+    {id:stableId('Moira Camporino / Tim Chirkov (unknown) 2026-10-22'),name:'Moira Camporino / Tim Chirkov',co:'(unknown)',channel:'Email',date:'2026-10-22',roles:'IAM Architect (onsite, remote option) - Fort Lauderdale, FL',status:'new',notes:'Both reaching out same role',created:Date.now()},
+    {id:stableId('Ellen Rusal (unknown) 2026-10-22'),name:'Ellen Rusal',co:'(unknown)',channel:'Phone / Cold Call',date:'2026-10-22',roles:'Immediate Remote Application Security Specialist',status:'responded',notes:'Screening call completed Oct 22; left voicemail',created:Date.now()},
+    {id:stableId('Pujitha Baday (unknown) 2026-10-22'),name:'Pujitha Baday',co:'(unknown)',channel:'Email',date:'2026-10-22',roles:'IAM / CIAM or Security Engineer with IBM Verify',status:'new',notes:'Outreach Oct 22',created:Date.now()},
+  ];
+  D.lastSync = new Date().toISOString();
+  D.seedVersion = SEED_VERSION;
+  saveLocal();
+}} // end disabled seed block
+
+// ── HELPERS ───────────────────────────────────────────────────
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
+function today() { return new Date().toISOString().split('T')[0]; }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtD(d) {
+  if(!d) return '—';
+  // Parse date-only strings (YYYY-MM-DD) as LOCAL time, not UTC, to avoid
+  // the classic JS off-by-one-day bug when displaying in US timezones
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d);
+  const dt = m ? new Date(+m[1], +m[2]-1, +m[3]) : new Date(d);
+  return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+function fmtDT(d) {
+  if(!d) return '—';
+  // Manually shift to US Eastern rather than trusting the browser's Intl
+  // timeZone support, which appears unreliable in this WebView (silently
+  // falls back to UTC). ET is UTC-5 standard / UTC-4 during DST (roughly
+  // mid-March to early November, which covers this use case).
+  const utcMs = new Date(d).getTime();
+  const ET_OFFSET_HOURS = -4; // EDT; flip to -5 outside DST if this drifts
+  const et = new Date(utcMs + ET_OFFSET_HOURS * 3600000);
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let h = et.getUTCHours();
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12; if (h === 0) h = 12;
+  const min = String(et.getUTCMinutes()).padStart(2,'0');
+  return `${months[et.getUTCMonth()]} ${et.getUTCDate()}, ${h}:${min} ${ampm}`;
+}
+
+function statusPill(s) {
+  const m = {applied:'Applied',screening:'Screening',interview:'Interview',offer:'Offer',rejected:'Rejected',offer_rejected:'Offer Rejected',ghosted:'Ghosted',hold:'On Hold'};
+  return `<span class="pill p-${s||'applied'}">${m[s]||s||'Applied'}</span>`;
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+function toggleForm(id) { document.getElementById(id).classList.toggle('open'); }
+function toggleMobileNav() { document.getElementById('mobileNavOverlay').classList.toggle('open'); }
+
+function nav(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('nav-'+name)?.classList.add('active');
+  if (name === 'report') renderReport();
+}
+
+function weekStart() {
+  const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-d.getDay()); return d;
+}
+function weekLabel() {
+  const ws = weekStart(), we = new Date(ws); we.setDate(we.getDate()+6);
+  const f = d => d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  return `Week of ${f(ws)} – ${f(we)}, ${we.getFullYear()}`;
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+const sortState = {
+  apps:  { col: 'date', dir: 'desc' },
+  ints:  { col: 'date', dir: 'asc'  },
+  recs:  { col: 'date', dir: 'desc' },
+};
+
+(async () => {
+  try {
+    await loadLocal();
+    // Seed only if storage has no data yet
+    if (!D.apps || D.apps.length === 0) {
+      function stableId(str) { let h=0; for(let i=0;i<str.length;i++){h=Math.imul(31,h)+str.charCodeAt(i)|0;} return 's'+Math.abs(h).toString(36); }
+      D.apps = SEED.map(s => ({id:stableId(s.co+s.role+s.date),co:s.co,role:s.role,date:s.date,status:s.status,src:s.src||'Other',link:'',notes:s.notes||'',created:Date.now()}));
+      D.interviews = [
+        {id:stableId('CVS Health Recruiter Screen 2026-10-27'),co:'CVS Health',round:'Recruiter Screen',date:'2026-10-27T14:30',people:'Derek Tucker',notes:'Senior IAM Engineer - Ping Identity & Directory Services',created:Date.now()},
+        {id:stableId('Baptist Health Hiring Manager 2026-10-26'),co:'Baptist Health South Florida',round:'Hiring Manager',date:'2026-10-26T13:00',people:'Caroline Dybala (recruiter)',notes:'Zoom; Sr IAM Engineer; rescheduled from Oct 23',created:Date.now()},
+        {id:stableId('Deloitte Technical Screen 2026-10-23'),co:'Deloitte',round:'Technical Screen',date:'2026-10-23T18:00',people:'Bhupendra (Webmsi)',notes:'Req 78579 IAM SSOi Entra ID Engineer; $65/hr; HireVue+Teams',created:Date.now()},
+        {id:stableId('F5 Recruiter Screen 2026-10-26'),co:'F5',round:'Recruiter Screen',date:'2026-10-26T00:00',people:'Jordan Bradley (internal)',notes:'SRE II - Site Reliability Engineer',created:Date.now()},
+        {id:stableId('Panthalassa Technical Screen 2026-10-21'),co:'Panthalassa',round:'Technical Screen',date:'2026-10-21T08:45',people:'Robert Grigg',notes:'IT IAM Engineer; occurred Oct 21',created:Date.now()},
+        {id:stableId('W.R. Berkley Hiring Manager 2026-10-07'),co:'W.R. Berkley',round:'Hiring Manager',date:'2026-10-07T14:30',people:'Buster (HM); via Insight Global',notes:'Security Engineer; W2 $155K-$170K',created:Date.now()},
+        {id:stableId('Infosys Offer Discussion 2026-10-22'),co:'Infosys',round:'Offer Discussion',date:'2026-10-22T12:00',people:'Kalyani; Nagesh K & Shameem Shaik (Avance)',notes:'Offer in hand; discussing relocation to Tempe AZ',created:Date.now()},
+        {id:stableId('Royal Caribbean Recruiter Screen 2026-10-22'),co:'Royal Caribbean',round:'Recruiter Screen',date:'2026-10-22T16:45',people:"Dylan O'Connor (cold call)",notes:'IAM role; screen completed 4:45 PM',created:Date.now()},
+        {id:stableId('Helion Recruiter Screen 2026-10-22'),co:'Helion',round:'Recruiter Screen',date:'2026-10-22T17:30',people:'Todd Stroh',notes:'Senior Systems Administrator; updated to 5:30 PM',created:Date.now()},
+      ];
+      D.recruiters = [
+        {id:stableId('Derek Tucker CVS Health'),name:'Derek Tucker',co:'CVS Health',channel:'Phone / Cold Call',date:'2026-10-21',roles:'Senior IAM Engineer - Ping Identity & Directory Services',status:'call-scheduled',notes:'Screen Tue Oct 27 2:30PM',created:Date.now()},
+        {id:stableId('Dwayne Webster Hyundai'),name:'Dwayne Webster',co:'Hyundai Autoever America',channel:'Email',date:'2026-10-22',roles:'Engineering Systems Administrator - IAM',status:'call-scheduled',notes:'Reached out for availability',created:Date.now()},
+        {id:stableId('Caroline Dybala Baptist Health'),name:'Caroline Dybala',co:'Baptist Health South Florida',channel:'Email',date:'2026-10-20',roles:'Sr. IAM Engineer',status:'call-scheduled',notes:'Interview Mon Oct 26 1PM EST',created:Date.now()},
+        {id:stableId('Jordan Bradley F5'),name:'Jordan Bradley',co:'F5 (internal)',channel:'Email',date:'2026-10-22',roles:'SRE II - Site Reliability Engineer',status:'call-scheduled',notes:'Screen Mon Oct 26',created:Date.now()},
+        {id:stableId('Todd Stroh Helion'),name:'Todd Stroh',co:'Helion Energy',channel:'Email',date:'2026-10-21',roles:'Senior Systems Administrator',status:'call-scheduled',notes:'Screen Oct 22 5:30PM EDT',created:Date.now()},
+        {id:stableId('Bhupendra Webmsi'),name:'Bhupendra',co:'Webmsi / Millennium Software (Deloitte)',channel:'Email',date:'2026-10-16',roles:'IAM SSOi Entra ID Engineer - Deloitte Req 78579',status:'call-scheduled',notes:'RTR $65/hr; HireVue screen Oct 23',created:Date.now()},
+        {id:stableId("Dylan O'Connor Royal Caribbean"),name:"Dylan O'Connor",co:'Royal Caribbean',channel:'Phone / Cold Call',date:'2026-10-22',roles:'IAM role',status:'responded',notes:'Cold call; screen completed 4:45 PM Oct 22',created:Date.now()},
+        {id:stableId('Shameem Shaik Avance'),name:'Shameem Shaik / Nagesh K',co:'Avance Services (Infosys)',channel:'Email',date:'2026-10-05',roles:'Ping Developer / Infrastructure Consultant',status:'pursuing',notes:'OFFER received Oct 21; negotiating relocation Tempe AZ',created:Date.now()},
+        {id:stableId('Robert Grigg Panthalassa'),name:'Robert Grigg',co:'Panthalassa',channel:'Email',date:'2026-10-14',roles:'IT IAM Engineer',status:'pursuing',notes:'Interview Oct 21',created:Date.now()},
+        {id:stableId('Penny Specter Premier America'),name:'Penny Specter',co:'Premier America Credit Union',channel:'Phone / Cold Call',date:'2026-10-19',roles:'Security Engineer',status:'pursuing',notes:'HR screen done; offer anticipated',created:Date.now()},
+        {id:stableId('Lucia Lombardo BHSGroup'),name:'Lucia Lombardo',co:'BHSGroup',channel:'Phone / Cold Call',date:'2026-10-13',roles:'Security Engineer',status:'pursuing',notes:'Phone screen Oct 13',created:Date.now()},
+        {id:stableId('Max Trembly Insight Global'),name:'Max Trembly / Anthony Rosano',co:'Insight Global (W.R. Berkley)',channel:'Email',date:'2026-10-05',roles:'Security Engineer',status:'pursuing',notes:'First round Oct 7; W2 $155K-$170K',created:Date.now()},
+        {id:stableId('Ujjwal Yadav RulesIQ'),name:'Ujjwal Yadav',co:'RulesIQ',channel:'Email',date:'2026-10-21',roles:'(role TBD)',status:'pursuing',notes:'Rate/RTR confirmed Oct 21',created:Date.now()},
+        {id:stableId('Ellen Rusal unknown'),name:'Ellen Rusal',co:'(unknown)',channel:'Phone / Cold Call',date:'2026-10-22',roles:'Remote Application Security Specialist',status:'responded',notes:'Screening call completed Oct 22',created:Date.now()},
+        {id:stableId('Pujitha Baday unknown'),name:'Pujitha Baday',co:'(unknown)',channel:'Email',date:'2026-10-22',roles:'IAM / CIAM or Security Engineer with IBM Verify',status:'new',notes:'Outreach Oct 22',created:Date.now()},
+      ];
+      D.lastSync = new Date().toISOString();
+      D.seedVersion = SEED_VERSION;
+      saveLocal();
+    }
+    document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    const todayStr = today();
+    ['f-date','r-date'].forEach(id => { const el = document.getElementById(id); if(el) el.value = todayStr; });
+    const nowD = new Date(); nowD.setMinutes(0);
+    const localNow = new Date(nowD.getTime()-nowD.getTimezoneOffset()*60000).toISOString().slice(0,16);
+    const idEl = document.getElementById('i-date'); if(idEl) idEl.value = localNow;
+    if (D.lastSync) setStatus('Synced ' + fmtDT(D.lastSync));
+    renderAll();
+    setTimeout(() => initDb(), 0);
+  } catch(initErr) {
+    console.error('INIT ERROR:', initErr);
+    document.getElementById('lastSync').textContent = 'Error: ' + initErr.message;
+  }
+})();
+
+// ── ADD RECORDS ───────────────────────────────────────────────
+async function addApp() {
+  const co = document.getElementById('f-co').value.trim();
+  const role = document.getElementById('f-role').value.trim();
+  if (!co || !role) { toast('Company and role required'); return; }
+  const rec = {
+    id: uid(), co, role,
+    date: document.getElementById('f-date').value || today(),
+    status: document.getElementById('f-status').value,
+    empType: 'direct',
+    src: document.getElementById('f-src').value,
+    link: document.getElementById('f-link').value.trim(),
+    notes: document.getElementById('f-notes').value.trim(),
+    created: Date.now()
+  };
+  D.apps.unshift(rec);
+  await saveRecord('apps', rec);
+  ['f-co','f-role','f-link','f-notes'].forEach(id => document.getElementById(id).value = '');
+  toggleForm('appForm');
+  if (!dbReady) renderAll(); // db subscriptions trigger renderAll automatically
+  toast(`Added ${co}`);
+}
+
+async function addInterview() {
+  const co = document.getElementById('i-co').value.trim();
+  if (!co) { toast('Company required'); return; }
+  const rec = {
+    id: uid(), co,
+    round: document.getElementById('i-round').value,
+    date: document.getElementById('i-date').value,
+    people: document.getElementById('i-people').value.trim(),
+    notes: document.getElementById('i-notes').value.trim(),
+    created: Date.now()
+  };
+  D.interviews.unshift(rec);
+  await saveRecord('interviews', rec);
+  ['i-co','i-people','i-notes'].forEach(id => document.getElementById(id).value = '');
+  toggleForm('intForm');
+  if (!dbReady) renderAll();
+  toast(`Interview added: ${co}`);
+}
+
+async function addRecruiter() {
+  const name = document.getElementById('r-name').value.trim();
+  const co = document.getElementById('r-co').value.trim();
+  if (!name && !co) { toast('Name or company required'); return; }
+  const rec = {
+    id: uid(), name, co,
+    channel: document.getElementById('r-ch').value,
+    date: document.getElementById('r-date').value || today(),
+    roles: document.getElementById('r-roles').value.trim(),
+    status: document.getElementById('r-status').value,
+    notes: document.getElementById('r-notes').value.trim(),
+    created: Date.now()
+  };
+  D.recruiters.unshift(rec);
+  await saveRecord('recruiters', rec);
+  ['r-name','r-co','r-roles','r-notes'].forEach(id => document.getElementById(id).value = '');
+  toggleForm('recForm');
+  if (!dbReady) renderAll();
+  toast('Recruiter lead added');
+}
+
+async function updateStatus(id, val) {
+  const a = D.apps.find(a => a.id === id);
+  if (a) {
+    a.status = val;
+    saveRecord('apps', a);
+    renderReport();
+  }
+}
+
+async function updateRecStatus(id, val) {
+  const r = D.recruiters.find(x => x.id === id);
+  if (!r) return;
+  r.status = val;
+  saveRecord('recruiters', r);
+  toast('Saved ✓');
+}
+
+const RECRUITER_STATUS_ORDER = ['new','responded','call-scheduled','pursuing','passed'];
+function cycleRecStatus(id) {
+  const r = D.recruiters.find(x => x.id === id);
+  if (!r) return;
+  const curIdx = RECRUITER_STATUS_ORDER.indexOf(r.status);
+  const next = RECRUITER_STATUS_ORDER[(curIdx + 1) % RECRUITER_STATUS_ORDER.length];
+  r.status = next;
+  saveRecord('recruiters', r);
+  const pill = document.querySelector(`[data-action="cycleRecStatus"][data-id="${id}"]`);
+  if (pill) {
+    const statusMap = {new:'applied',responded:'screening','call-scheduled':'interview',pursuing:'interview',passed:'rejected'};
+    const labelMap = {new:'New Lead',responded:'Responded','call-scheduled':'Call Sched.',pursuing:'Pursuing',passed:'Passed'};
+    pill.className = 'pill p-' + (statusMap[next] || 'applied');
+    pill.textContent = (labelMap[next] || next) + ' ⟳';
+  }
+  toast('Status: ' + next);
+}
+
+async function updateIntField(id, key, val) {
+  const i = D.interviews.find(x => x.id === id);
+  if (i) {
+    i[key] = val;
+    await saveRecord('interviews', i);
+    renderAll();
+  }
+}
+
+async function delApp(id) {
+  D.apps = D.apps.filter(a => a.id !== id);
+  await deleteRecord('apps', id);
+  if (!dbReady) renderAll();
+  toast('Removed');
+}
+async function delInt(id) {
+  D.interviews = D.interviews.filter(a => a.id !== id);
+  await deleteRecord('interviews', id);
+  if (!dbReady) renderAll();
+  toast('Removed');
+}
+async function delRec(id) {
+  D.recruiters = D.recruiters.filter(a => a.id !== id);
+  await deleteRecord('recruiters', id);
+  if (!dbReady) renderAll();
+  toast('Removed');
+}
+
+// ── SORT / SEARCH ─────────────────────────────────────────────
+function sortApps(col) {
+  const s = sortState.apps;
+  s.dir = (s.col === col && s.dir === 'asc') ? 'desc' : 'asc';
+  s.col = col;
+  updateSortHeaders('app-table', col, s.dir, ['co','role','src','date','status']);
+  renderApps();
+}
+function sortInts(col) {
+  const s = sortState.ints;
+  s.dir = (s.col === col && s.dir === 'asc') ? 'desc' : 'asc';
+  s.col = col;
+  updateSortHeaders('int-table', col, s.dir, ['co','round','date']);
+  renderInterviews();
+}
+function sortRecs(col) {
+  const s = sortState.recs;
+  s.dir = (s.col === col && s.dir === 'asc') ? 'desc' : 'asc';
+  s.col = col;
+  updateSortHeaders('rec-table', col, s.dir, ['name','co','channel','date','status']);
+  renderRecruiters();
+}
+
+function updateSortHeaders(tableId, activeCol, dir, cols) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+  const ths = table.closest('table').querySelectorAll('th.sortable');
+  ths.forEach(th => {
+    th.classList.remove('asc','desc');
+    const onclick = th.getAttribute('onclick') || '';
+    const match = onclick.match(/'(\w+)'\)/);
+    if (match && match[1] === activeCol) th.classList.add(dir);
+  });
+}
+
+function applySortAndFilter(arr, s, searchVal, searchFields) {
+  // Search
+  let out = arr;
+  if (searchVal) {
+    const q = searchVal.toLowerCase();
+    out = arr.filter(r => searchFields.some(f => (r[f]||'').toLowerCase().includes(q)));
+  }
+  // Sort
+  out = [...out].sort((a, b) => {
+    let av = (a[s.col]||''), bv = (b[s.col]||'');
+    // Date sort: compare timestamps
+    if (s.col === 'date') { av = new Date(av).getTime()||0; bv = new Date(bv).getTime()||0; }
+    else { av = av.toString().toLowerCase(); bv = bv.toString().toLowerCase(); }
+    if (av < bv) return s.dir === 'asc' ? -1 : 1;
+    if (av > bv) return s.dir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  return out;
+}
+
+// ── RENDER ────────────────────────────────────────────────────
+let rptTab = 'week';
+function switchRptTab(t) {
+  rptTab = t;
+  const rw = document.getElementById('rt-week'); if(rw) rw.classList.toggle('active', t==='week');
+  const ra = document.getElementById('rt-all'); if(ra) ra.classList.toggle('active', t==='all');
+  renderReport();
+}
+
+function renderAll() {
+  const apps = D.apps;
+  const submitted = apps.length; // total tracked applications, all statuses
+  document.getElementById('nb-apps').textContent = submitted;
+  document.getElementById('nb-int').textContent = D.interviews.length;
+  document.getElementById('nb-rec').textContent = D.recruiters.length;
+  const ma = document.getElementById('nb-apps-m'); if(ma) ma.textContent = submitted;
+  const mi = document.getElementById('nb-int-m'); if(mi) mi.textContent = D.interviews.length;
+  const mr = document.getElementById('nb-rec-m'); if(mr) mr.textContent = D.recruiters.length;
+
+  const total = apps.length;
+  const screen = apps.filter(a=>a.status==='screening').length;
+  const inter = apps.filter(a=>a.status==='interview').length;
+  const offer = apps.filter(a=>a.status==='offer').length;
+  const reject = apps.filter(a=>a.status==='rejected'||a.status==='offer_rejected').length;
+  const hold = apps.filter(a=>a.status==='hold').length;
+  const responded = screen+inter+offer+reject;
+  const rate = submitted > 0 ? Math.round((responded/submitted)*100) : 0;
+
+  document.getElementById('s-total').textContent = submitted;
+  document.getElementById('s-screen').textContent = screen;
+  document.getElementById('s-inter').textContent = inter;
+  document.getElementById('s-offer').textContent = offer;
+  document.getElementById('s-reject').textContent = reject;
+  document.getElementById('s-rate').textContent = rate+'%';
+  document.getElementById('s-rate').style.color = rate>=20?'var(--green)':rate>=10?'var(--yel)':'var(--tx)';
+
+  // Recent Activity — 8 most recently updated (non-applied statuses first, then by date)
+  const activityOrder = {offer:0,interview:1,screening:2,hold:3,rejected:4,ghosted:5,applied:6};
+  const recentActivity = [...apps]
+    .sort((a,b) => {
+      const ao = activityOrder[a.status]??6, bo = activityOrder[b.status]??6;
+      if (ao !== bo) return ao - bo;
+      return new Date(b.date) - new Date(a.date);
+    })
+    .slice(0, 8);
+
+  const activityLabels = {offer:'🟢 Offer received',offer_rejected:'🔴 Offer rejected',interview:'🟣 Interviewing',screening:'🟡 Screening call',hold:'⏸ On hold',rejected:'🔴 Rejected',ghosted:'⬛ Ghosted',applied:'📄 Applied'};
+  const ra = document.getElementById('dash-activity');
+  if (!apps.length) {
+    ra.innerHTML = '<tr><td colspan="4"><div class="empty">No activity yet.</div></td></tr>';
+  } else {
+    ra.innerHTML = recentActivity.map(a=>`<tr>
+      <td><strong>${esc(a.co)}</strong></td>
+      <td style="color:var(--tx2);font-size:12px">${esc(a.role)}</td>
+      <td style="color:var(--tx3);font-size:12px">${activityLabels[a.status]||a.status}</td>
+      <td>${statusPill(a.status)}</td>
+    </tr>`).join('');
+  }
+
+  // Recent Applications — 8 most recently applied (by date desc)
+  const rb = document.getElementById('dash-recent');
+  const recentApps = [...apps].sort((a,b) => new Date(b.date)-new Date(a.date)).slice(0,8);
+  if (!apps.length) {
+    rb.innerHTML = '<tr><td colspan="4"><div class="empty">No applications yet.</div></td></tr>';
+  } else {
+    rb.innerHTML = recentApps.map(a=>`<tr>
+      <td><strong>${esc(a.co)}</strong></td>
+      <td style="color:var(--tx2);font-size:12px">${esc(a.role)}</td>
+      <td style="color:var(--tx3)">${fmtD(a.date)}</td>
+      <td>${statusPill(a.status)}</td>
+    </tr>`).join('');
+  }
+
+  renderApps();
+  renderInterviews();
+  renderRecruiters();
+  if (document.getElementById('page-report').classList.contains('active')) renderReport();
+}
+
+function renderApps() {
+  const filterStatus = document.getElementById('filter-status').value;
+  const searchVal = (document.getElementById('app-search')||{}).value || '';
+  let apps = filterStatus ? D.apps.filter(a=>a.status===filterStatus) : D.apps;
+  apps = applySortAndFilter(apps, sortState.apps, searchVal, ['co','role','src','notes']);
+
+  const label = filterStatus ? `${apps.length} Application${apps.length!==1?'s':''} — ${filterStatus}` : `All Applications (${apps.length})`;
+  document.getElementById('apps-count-lbl').textContent = label;
+
+  const tb = document.getElementById('app-table');
+  if (!apps.length) {
+    tb.innerHTML = '<tr><td colspan="6"><div class="empty">No applications match.</div></td></tr>';
+    return;
+  }
+  tb.innerHTML = apps.map(a=>`<tr class="clickable" data-action="openAppEdit" data-id="${a.id}">
+    <td><strong>${esc(a.co)}</strong>${a.notes?`<br><span style="font-size:11px;color:var(--tx3)">${esc(a.notes.slice(0,60))}</span>`:''}</td>
+    <td style="color:var(--tx2);font-size:12px">${esc(a.role)}</td>
+    <td><span class="tag">${esc(a.src||'')}</span></td>
+    <td style="color:var(--tx3);white-space:nowrap">${fmtD(a.date)}</td>
+    <td><span class="tag" style="background:${a.empType==='contract'?'rgba(236,72,153,.12)':'rgba(59,130,246,.12)'};color:${a.empType==='contract'?'#ec4899':'#3b82f6'}">${a.empType==='contract'?'Contract':'Direct/FTE'}</span></td>
+    <td>${statusPill(a.status)}</td>
+    <td><button class="del" data-action="delApp" data-id="${a.id}">✕</button></td>
+  </tr>`).join('');
+}
+
+let _modalCtx = null; // {coll, id, fields}
+
+function closeModal() {
+  const el = document.getElementById('modalOverlay') || document.querySelector('.modal-overlay');
+  if (el) el.style.display = 'none';
+  _modalCtx = null;
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+function openEditModal(title, fields, coll, id) {
+  _modalCtx = {coll, id, fields};
+  document.getElementById('m-title').textContent = title;
+  // Build fields, then set values via JS to avoid HTML-encoding issues
+  document.getElementById('m-fields').innerHTML = fields.map(f => {
+    let input;
+    if (f.type === 'readonly') {
+      input = `<div style="padding:7px 10px;color:var(--tx2);font-size:13px;background:var(--bg);border:1px solid var(--brd);border-radius:6px">${esc(f.value||'—')}</div>`;
+    } else if (f.type === 'select') {
+      // Button group instead of native <select> — more reliable across mobile webviews
+      input = `<div class="m-btn-group" id="mf-${f.key}" data-field-key="${f.key}">${f.options.map(o=>
+        `<button type="button" class="m-btn-opt${o.v===f.value?' active':''}" data-val="${esc(o.v)}">${esc(o.l)}</button>`
+      ).join('')}</div>`;
+    } else if (f.type === 'textarea') {
+      input = `<textarea id="mf-${f.key}"></textarea>`;
+    } else {
+      input = `<input id="mf-${f.key}" type="${f.type||'text'}">`;
+    }
+    return `<div class="m-field"><label>${esc(f.label)}</label>${input}</div>`;
+  }).join('');
+  // Set values safely via JS after DOM insertion, and capture live changes directly into f.value
+  fields.forEach(f => {
+    if (f.type === 'readonly') return;
+    const el = document.getElementById('mf-'+f.key);
+    if (!el) return;
+    if (f.type === 'select') return; // button group handles its own state via data-val/active class
+    el.value = f.value || '';
+    el.addEventListener('change', () => { f.value = el.value; });
+    el.addEventListener('input', () => { f.value = el.value; });
+  });
+  document.getElementById('modalOverlay').style.display = 'flex';
+}
+
+// Master delegated event handler — replaces all inline onclick/oninput/onchange
+document.addEventListener('click', e => {
+  // Modal button-group option tap
+  const btnOpt = e.target.closest('.m-btn-opt');
+  if (btnOpt) {
+    const group = btnOpt.closest('.m-btn-group');
+    if (group) {
+      group.querySelectorAll('.m-btn-opt').forEach(b => b.classList.remove('active'));
+      btnOpt.classList.add('active');
+      const key = group.dataset.fieldKey;
+      if (_modalCtx) {
+        const f = _modalCtx.fields.find(fl => fl.key === key);
+        if (f) f.value = btnOpt.dataset.val;
+      }
+    }
+    return;
+  }
+  const t = e.target.closest('[data-action]');
+  if (!t) return;
+  if (!t) return;
+  const a = t.dataset.action;
+  const col = t.dataset.col;
+  if (a === 'toggleMobileNav') toggleMobileNav();
+  else if (a === 'mobileNavOverlay') { if (e.target === t) toggleMobileNav(); }
+  else if (a === 'nav-dashboard') nav('dashboard');
+  else if (a === 'nav-report') nav('report');
+  else if (a === 'nav-apps') nav('apps');
+  else if (a === 'nav-interviews') nav('interviews');
+  else if (a === 'nav-recruiters') nav('recruiters');
+  else if (a === 'nav-dashboard-mobile') { nav('dashboard'); toggleMobileNav(); }
+  else if (a === 'nav-report-mobile') { nav('report'); toggleMobileNav(); }
+  else if (a === 'nav-apps-mobile') { nav('apps'); toggleMobileNav(); }
+  else if (a === 'nav-interviews-mobile') { nav('interviews'); toggleMobileNav(); }
+  else if (a === 'nav-recruiters-mobile') { nav('recruiters'); toggleMobileNav(); }
+  else if (a === 'toggle-appForm') toggleForm('appForm');
+  else if (a === 'toggle-intForm') toggleForm('intForm');
+  else if (a === 'toggle-recForm') toggleForm('recForm');
+  else if (a === 'addApp') addApp();
+  else if (a === 'addInterview') addInterview();
+  else if (a === 'addRecruiter') addRecruiter();
+  else if (a === 'sortApps') sortApps(col);
+  else if (a === 'sortInts') sortInts(col);
+  else if (a === 'sortRecs') sortRecs(col);
+  else if (a === 'modalOverlay') { if (e.target === t) closeModal(); }
+  else if (a === 'closeModal') closeModal();
+  else if (a === 'modal-save-btn' || t.id === 'modal-save-btn') saveModal();
+  else if (a === 'modal-cancel-btn' || t.id === 'modal-cancel-btn') closeModal();
+  else if (a === 'openAppEdit') { e.stopPropagation(); openAppEdit(t.dataset.id); }
+  else if (a === 'openIntEdit') { e.stopPropagation(); openModal(D.interviews.find(x=>x.id===t.dataset.id)); }
+  else if (a === 'openRecEdit') { e.stopPropagation(); openRecEdit(t.dataset.id); }
+  else if (a === 'cycleRecStatus') { e.stopPropagation(); cycleRecStatus(t.dataset.id); }
+  else if (a === 'delApp') { e.stopPropagation(); delApp(t.dataset.id); }
+  else if (a === 'delInt') { e.stopPropagation(); delInt(t.dataset.id); }
+  else if (a === 'delRec') { e.stopPropagation(); delRec(t.dataset.id); }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.onchange === 'renderApps') { renderApps(); return; }
+  const s = t.closest('[data-action="updateStatus"]');
+  if (s) {
+    e.stopPropagation();
+    const selId = s.dataset.id;
+    setTimeout(() => { updateStatus(selId, s.value); }, 50);
+    return;
+  }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.oninput === 'renderApps') renderApps();
+  else if (t.dataset.oninput === 'renderInterviews') renderInterviews();
+  else if (t.dataset.oninput === 'renderRecruiters') renderRecruiters();
+});
+
+function saveModal() {
+  if (!_modalCtx) return;
+  const {coll, id, fields} = _modalCtx;
+  const arr = coll === 'apps' ? D.apps : coll === 'interviews' ? D.interviews : D.recruiters;
+  const idx = arr.findIndex(x => x.id === id);
+  if (idx === -1) { toast('Error: not found'); return; }
+  // Read fields synchronously before closing modal
+  const changes = [];
+  fields.forEach(f => {
+    if (f.type === 'readonly') return; // display-only, not a real field to save
+    let finalVal;
+    if (f.type === 'select') {
+      finalVal = f.value; // captured live from button-group taps
+    } else {
+      const el = document.getElementById('mf-' + f.key);
+      finalVal = el ? el.value : f.value;
+    }
+    const old = arr[idx][f.key];
+    arr[idx][f.key] = finalVal;
+    if (old !== finalVal) changes.push(f.key + ':' + String(finalVal).slice(0,10));
+  });
+  const savedColl = coll;
+  const savedRec = arr[idx];
+  _modalCtx = null;
+  document.getElementById('modalOverlay').style.display = 'none';
+  try {
+    renderAll();
+    toast('Saved ✓');
+    // Flash the updated row so it's unmistakable, and scroll to it
+    setTimeout(() => {
+      const row = document.querySelector(`[data-id="${savedRec.id}"]`);
+      if (row) {
+        row.scrollIntoView({behavior:'smooth', block:'center'});
+        row.style.backgroundColor = 'rgba(34,197,94,0.3)';
+        setTimeout(() => { row.style.backgroundColor = ''; }, 2000);
+      }
+    }, 50);
+  } catch(e) { toast('Error: ' + e.message); }
+  saveLocal();
+  if (db) db.collection(savedColl).doc(String(savedRec.id)).set(savedRec).catch(e => console.warn('db write:', e));
+}
+
+function openAppEdit(id) {
+  if (!_dbReady) { toast('Still loading, please wait…'); return; }
+  const a = D.apps.find(x=>x.id===id); if(!a) return;
+  const statusLabels = {applied:'Applied',screening:'Screening',interview:'Interview',offer:'Offer',offer_rejected:'Offer Rejected',rejected:'Rejected',ghosted:'Ghosted',hold:'On Hold'};
+  const empLabels = {direct:'Direct/FTE',contract:'Contract'};
+  openEditModal(a.co + ' — ' + a.role, [
+    {key:'co',    label:'Company',  type:'text',     value:a.co},
+    {key:'role',  label:'Role',     type:'text',     value:a.role},
+    {key:'date',  label:'Date Applied', type:'date', value:a.date},
+    {key:'_empTypeDisplay', label:'Employment Type (use table dropdown or chat to change)', type:'readonly', value:empLabels[a.empType]||a.empType||'Direct/FTE'},
+    {key:'_statusDisplay', label:'Status (use table dropdown or chat to change)', type:'readonly', value:statusLabels[a.status]||a.status},
+    {key:'src',   label:'Source',   type:'text',     value:a.src},
+    {key:'notes', label:'Notes',    type:'textarea', value:a.notes},
+  ], 'apps', id);
+}
+
+function openRecEdit(id) {
+  if (!_dbReady) { toast('Still loading, please wait…'); return; }
+  const r = D.recruiters.find(x=>x.id===id); if(!r) return;
+  openEditModal((r.name||'Recruiter') + ' — ' + (r.co||''), [
+    {key:'name',    label:'Recruiter Name', type:'text',    value:r.name},
+    {key:'co',      label:'Company',        type:'text',    value:r.co},
+    {key:'channel', label:'Channel',        type:'select',  value:r.channel, options:[
+      {v:'Email',l:'Email'},{v:'Phone / Cold Call',l:'Phone / Cold Call'},
+      {v:'LinkedIn',l:'LinkedIn'},{v:'Referral',l:'Referral'},{v:'Other',l:'Other'}
+    ]},
+    {key:'date',    label:'Date',           type:'date',    value:r.date},
+    {key:'roles',   label:'Role(s)',        type:'text',    value:r.roles},
+    {key:'status',  label:'Status',         type:'select',  value:r.status, options:[
+      {v:'new',l:'New Lead'},{v:'responded',l:'Responded'},
+      {v:'call-scheduled',l:'Call Scheduled'},{v:'pursuing',l:'Pursuing'},{v:'passed',l:'Passed'}
+    ]},
+    {key:'notes',   label:'Notes',          type:'textarea',value:r.notes},
+  ], 'recruiters', id);
+}
+
+function openModal(i) { // interview row click — opens edit modal
+  if (!_dbReady) { toast('Still loading, please wait…'); return; }
+  openEditModal(i.co, [
+    {key:'co',    label:'Company',    type:'text',     value:i.co},
+    {key:'round', label:'Round',      type:'select',   value:i.round, options:[
+      {v:'Phone Screen',l:'Phone Screen'},{v:'Recruiter Screen',l:'Recruiter Screen'},
+      {v:'Technical Screen',l:'Technical Screen'},{v:'Hiring Manager',l:'Hiring Manager'},
+      {v:'Panel / Loop',l:'Panel / Loop'},{v:'Final Round',l:'Final Round'},
+      {v:'Take-Home',l:'Take-Home'},{v:'Offer Discussion',l:'Offer Discussion'}
+    ]},
+    {key:'date',   label:'Date & Time', type:'datetime-local', value:i.date},
+    {key:'people', label:'With',        type:'text',     value:i.people},
+    {key:'notes',  label:'Notes',       type:'textarea', value:i.notes},
+  ], 'interviews', i.id);
+}
+
+function renderInterviews() {
+  const tb = document.getElementById('int-table');
+  const searchVal = (document.getElementById('int-search')||{}).value || '';
+  const sorted = applySortAndFilter(D.interviews, sortState.ints, searchVal, ['co','round','people','notes']);
+  if (!sorted.length) {
+    tb.innerHTML = '<tr><td colspan="6"><div class="empty">No interviews match.</div></td></tr>';
+    return;
+  }
+  const now = Date.now();
+  tb.innerHTML = sorted.map(i=>{
+    const upcoming = new Date(i.date).getTime() > now;
+    const dataStr = encodeURIComponent(JSON.stringify(i));
+    return `<tr class="clickable" data-action="openIntEdit" data-id="${i.id}" style="${upcoming?'background:rgba(139,92,246,.04)':''}">
+      <td><strong>${esc(i.co)}</strong>${upcoming?'<span style="margin-left:6px;font-size:10px;color:var(--pur);font-weight:600">UPCOMING</span>':''}</td>
+      <td style="color:var(--tx2)">${esc(i.round)}</td>
+      <td style="color:var(--tx3);white-space:nowrap">${fmtDT(i.date)}</td>
+      <td style="color:var(--tx3);font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(i.people||'—')}</td>
+      <td style="color:var(--tx3);font-size:12px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(i.notes||'—')}</td>
+      <td><button class="del" data-action="delInt" data-id="${i.id}">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderRecruiters() {
+  const tb = document.getElementById('rec-table');
+  if (!tb) return;
+  const searchVal = (document.getElementById('rec-search')||{}).value || '';
+  const recs = applySortAndFilter(D.recruiters, sortState.recs, searchVal, ['name','co','roles','notes','channel']);
+  if (!recs.length) {
+    tb.innerHTML = '<tr><td colspan="7"><div class="empty">No recruiter leads match.</div></td></tr>';
+    return;
+  }
+  const statusMap = {new:'applied',responded:'screening','call-scheduled':'callsched',pursuing:'pursuing',passed:'rejected'};
+  const labelMap = {new:'New Lead',responded:'Responded','call-scheduled':'Call Sched.',pursuing:'Pursuing',passed:'Passed'};
+  tb.innerHTML = recs.map(r=>`<tr data-id="${r.id}">
+    <td><strong>${esc(r.name||'—')}</strong></td>
+    <td style="color:var(--tx2)">${esc(r.co||'—')}</td>
+    <td><span class="tag">${esc(r.channel||'')}</span></td>
+    <td style="color:var(--tx3);font-size:12px">${esc(r.roles||'—')}</td>
+    <td style="color:var(--tx3);white-space:nowrap">${fmtD(r.date)}</td>
+    <td><span class="pill p-${statusMap[r.status]||'applied'}">${labelMap[r.status]||r.status}</span></td>
+    <td><button class="del" data-action="delRec" data-id="${r.id}">✕</button></td>
+  </tr>`).join('');
+}
+
+// Week bucket boundaries for the report
+// Week 0 = Oct 2–3 (partial, merged into first bucket)
+// Week 1 = Oct 4–10, Week 2 = Oct 11–17, Week 3 = Oct 18–24, etc.
+function getWeekBuckets() {
+  const start = new Date('2026-10-02T00:00:00'); // Oct 2 search start
+  // Partial first week: Oct 2-3 (Sun Oct 4 is start of first full week)
+  const buckets = [
+    {label:'Oct 2–3', start:new Date('2026-10-02'), end:new Date('2026-10-03T23:59:59')},
+    {label:'Oct 4–10', start:new Date('2026-10-04'), end:new Date('2026-10-10T23:59:59')},
+    {label:'Oct 11–17', start:new Date('2026-10-11'), end:new Date('2026-10-17T23:59:59')},
+    {label:'Oct 18–24', start:new Date('2026-10-18'), end:new Date('2026-10-24T23:59:59')},
+    {label:'Oct 25–31', start:new Date('2026-10-25'), end:new Date('2026-10-31T23:59:59')},
+  ];
+  return buckets;
+}
+
+function renderReport() {
+  const ws = weekStart().getTime();
+  const allApps = D.apps;
+  // "This week" = current Sun–Sat calendar week
+  const weekApps = allApps.filter(a => new Date(a.date).getTime() >= ws);
+  const apps = rptTab === 'week' ? weekApps : allApps;
+
+  // Applied this period
+  const total = apps.length;
+
+  // Screening/Offer/Hold: count ALL apps currently in that status
+  const allScreen = allApps.filter(a=>a.status==='screening').length;
+  const allOfferCurrent = allApps.filter(a=>a.status==='offer').length; // currently active offers only
+  const allOffer  = allApps.filter(a=>a.status==='offer'||a.status==='offer_rejected').length; // total ever received
+  const allHold   = allApps.filter(a=>a.status==='hold').length;
+  // Interviews: count actual interview EVENTS logged (each round/stage counts separately),
+  // not just apps whose current status happens to be 'interview'
+  const allInter  = D.interviews.length;
+
+  // Week-specific screening/interview = apps applied this week that are in those statuses
+  const weekScreen = weekApps.filter(a=>a.status==='screening').length;
+  const weekInter  = weekApps.filter(a=>a.status==='interview').length;
+  const weekOffer  = weekApps.filter(a=>a.status==='offer').length;
+
+  const screen = rptTab==='week' ? allScreen : allScreen;
+  const inter  = rptTab==='week' ? allInter  : allInter;
+  const offer  = rptTab==='week' ? allOffer  : allOffer;
+  const hold   = allHold;
+
+  // Rejections = total rejected apps (status=rejected), always all-time
+  // Can't reliably know *when* a rejection arrived without a rejectedDate field
+  const reject = allApps.filter(a=>a.status==='rejected'||a.status==='offer_rejected').length;
+
+  // Response rate = (screening + interview + offer) / total applied (all time)
+  // Excludes rejected since they don't represent positive responses
+  const allTotal = allApps.length;
+  const positiveResponses = allScreen + allInter + allOffer;
+  const rate = allTotal > 0 ? Math.round((positiveResponses / allTotal) * 100) : 0;
+
+  // Weekly breakdown chart data
+  const buckets = getWeekBuckets();
+  const weeklyData = buckets.map(b => ({
+    label: b.label,
+    applied: allApps.filter(a => { const d=new Date(a.date); return d>=b.start && d<=b.end; }).length,
+    rejected: allApps.filter(a => { const d=new Date(a.date); return d>=b.start && d<=b.end && a.status==='rejected'; }).length,
+  }));
+
+  const pipeline = [
+    {lbl:'Applied',cnt:allApps.filter(a=>a.status==='applied').length,col:'var(--bluel)'},
+    {lbl:'Screening',cnt:allApps.filter(a=>a.status==='screening').length,col:'var(--yel)'},
+    {lbl:'Interview',cnt:allInter,col:'var(--pur)'},
+    {lbl:'Current Offers',cnt:allOfferCurrent,col:'var(--green)'},
+    {lbl:'Rejected',cnt:allApps.filter(a=>a.status==='rejected'||a.status==='offer_rejected').length,col:'var(--red)'},
+    {lbl:'On Hold',cnt:allApps.filter(a=>a.status==='hold').length,col:'var(--yel)'},
+  ];
+
+  const sources = {};
+  allApps.forEach(a=>{ sources[a.src||'Other']=(sources[a.src||'Other']||0)+1; });
+  const srcSorted = Object.entries(sources).sort((a,b)=>b[1]-a[1]).slice(0,6);
+
+  const upcoming = [...D.interviews].filter(i=>new Date(i.date).getTime()>Date.now()).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,6);
+
+  const wkRec = D.recruiters.filter(r=>new Date(r.date).getTime()>=ws);
+
+  document.getElementById('rpt-content').innerHTML = `
+    <div class="rpt-grid">
+      <div class="rpt-sec">
+        <h3>All-Time Summary</h3>
+        <div class="rpt-row"><span>Total applications</span><span class="rpt-val" style="color:var(--bluel)">${allApps.length}</span></div>
+        <div class="rpt-row"><span style="padding-left:12px;font-size:12px;color:var(--tx3)">— still at "Applied"</span><span class="rpt-val" style="font-size:13px;color:var(--tx3)">${allApps.filter(a=>a.status==='applied').length}</span></div>
+        <div class="rpt-row"><span>Screening</span><span class="rpt-val" style="color:var(--yel)">${allScreen}</span></div>
+        <div class="rpt-row"><span>Interviews (all stages)</span><span class="rpt-val" style="color:var(--pur)">${allInter}</span></div>
+        <div class="rpt-row"><span>Total Offers Received</span><span class="rpt-val" style="color:var(--green)">${allOffer}</span></div>
+        <div class="rpt-row"><span style="padding-left:12px;font-size:12px;color:var(--tx3)">— currently active</span><span class="rpt-val" style="font-size:13px;color:var(--tx3)">${allOfferCurrent}</span></div>
+        <div class="rpt-row"><span>Rejected</span><span class="rpt-val" style="color:var(--red)">${reject}</span></div>
+        <div class="rpt-row"><span style="padding-left:12px;font-size:12px;color:var(--tx3)">— offers rejected</span><span class="rpt-val" style="font-size:13px;color:var(--tx3)">${allApps.filter(a=>a.status==='offer_rejected').length}</span></div>
+        <div class="rpt-row"><span>On hold</span><span class="rpt-val" style="color:var(--yel)">${hold}</span></div>
+        <div class="rpt-row" style="border-top:1px solid var(--brd);margin-top:6px;padding-top:8px"><span>Total tracked</span><span class="rpt-val" style="color:var(--tx3)">${allTotal}</span></div>
+        ${(()=>{
+          const submitted = allApps.length; // every application ever sent, regardless of current status
+          const posRate = submitted>0 ? Math.round((allScreen+allInter+allOffer)/submitted*100) : 0;
+          const rejRate = submitted>0 ? Math.round((reject+hold)/submitted*100) : 0;
+          const totRate = submitted>0 ? Math.round((allScreen+allInter+allOffer+reject+hold)/submitted*100) : 0;
+          const col = r => r>=20?'var(--green)':r>=10?'var(--yel)':'var(--slate)';
+          return `<div style="margin-top:14px;display:flex;gap:6px;justify-content:space-between">
+            <div style="text-align:center;flex:1">
+              <div class="rate-big" style="color:var(--green)">${posRate}%</div>
+              <div style="font-size:11px;color:var(--tx3);margin-top:2px">Positive</div>
+              <div style="font-size:10px;color:var(--tx3)">screen+int+offer</div>
+            </div>
+            <div style="text-align:center;flex:1">
+              <div class="rate-big" style="color:var(--red)">${rejRate}%</div>
+              <div style="font-size:11px;color:var(--tx3);margin-top:2px">Rejection</div>
+              <div style="font-size:10px;color:var(--tx3)">rejected+hold</div>
+            </div>
+            <div style="text-align:center;flex:1">
+              <div class="rate-big" style="color:var(--bluel)">${totRate}%</div>
+              <div style="font-size:11px;color:var(--tx3);margin-top:2px">Total</div>
+              <div style="font-size:10px;color:var(--tx3)">all outcomes</div>
+            </div>
+          </div>`;
+        })()}
+      </div>
+      <div class="rpt-sec">
+        <h3>Overall Pipeline (all time)</h3>
+        ${pipeline.map(p=>`<div class="bar-row">
+          <div class="bar-lbl">${esc(p.lbl)}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${allTotal>0?Math.round(p.cnt/allTotal*100):0}%;background:${p.col}"></div></div>
+          <div class="bar-cnt">${p.cnt}</div>
+        </div>`).join('')}
+      </div>
+      <div class="rpt-sec">
+        <h3>Weekly Applications</h3>
+        ${weeklyData.map(w=>`
+          <div style="margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);margin-bottom:3px">
+              <span>${esc(w.label)}</span>
+              <span>${w.applied} applied${w.rejected?' · '+w.rejected+' rejected':''}</span>
+            </div>
+            <div style="height:6px;background:var(--bg);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:${allTotal>0?Math.round(w.applied/allTotal*100*3):0}%;max-width:100%;background:var(--bluel);border-radius:3px"></div>
+            </div>
+          </div>`).join('')}
+        <div style="margin-top:12px;border-top:1px solid var(--brd);padding-top:12px">
+          <h3 style="margin-bottom:10px">By Source</h3>
+          ${srcSorted.length?srcSorted.map(([src,cnt])=>`<div class="bar-row">
+            <div class="bar-lbl">${esc(src)}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${allTotal>0?Math.round(cnt/allTotal*100):0}%;background:var(--bluel)"></div></div>
+            <div class="bar-cnt">${cnt}</div>
+          </div>`).join(''):'<div style="color:var(--tx3);font-size:13px">No data</div>'}
+        </div>
+      </div>
+      <div class="rpt-sec">
+        <h3>Upcoming Interviews</h3>
+        ${upcoming.length?upcoming.map(i=>`<div class="rpt-row">
+          <div><div style="font-weight:600">${esc(i.co)}</div><div style="font-size:11px;color:var(--tx3)">${esc(i.round)}</div></div>
+          <div style="font-size:12px;color:var(--tx2);text-align:right">${fmtDT(i.date)}</div>
+        </div>`).join(''):'<div style="color:var(--tx3);font-size:13px;padding:6px 0">No upcoming interviews</div>'}
+        <div style="margin-top:14px;border-top:1px solid var(--brd);padding-top:12px">
+          <h3 style="margin-bottom:10px">Recruiter Activity</h3>
+          <div class="rpt-row"><span>Total leads</span><span class="rpt-val">${D.recruiters.length}</span></div>
+          <div class="rpt-row"><span>Active / pursuing</span><span class="rpt-val" style="color:var(--green)">${D.recruiters.filter(r=>r.status==='responded'||r.status==='pursuing'||r.status==='call-scheduled').length}</span></div>
+          <div class="rpt-row"><span>New this week</span><span class="rpt-val" style="color:var(--bluel)">${wkRec.length}</span></div>
+        </div>
+      </div>
+    </div>`;
+}
+</script>
+</body>
+</html>
