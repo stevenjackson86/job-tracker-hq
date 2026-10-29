@@ -279,7 +279,7 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
             <div class="ff"><label>Link (optional)</label><input id="f-link" placeholder="https://…"/></div>
           </div>
           <div class="fr">
-            <div class="ff"><label>Recruiter (optional)</label><select id="f-recruiter"><option value="">&#8212; None &#8212;</option></select></div>
+            <div class="ff"><label>Recruiter (optional)</label><select id="f-recruiter"><option value="">None</option></select></div>
             <div class="ff"><label>Emp. Type</label><select id="f-emptype"><option value="direct">Direct/FTE</option><option value="contract">Contract</option></select></div>
           </div>
           <div class="ff"><label>Notes</label><textarea id="f-notes" placeholder="Comp, referral contact, notes…"></textarea></div>
@@ -327,7 +327,7 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
             <div class="ff"><label>Date & Time</label><input id="i-date" type="datetime-local"/></div>
             <div class="ff"><label>Interviewer(s)</label><input id="i-people" placeholder="Jane Smith, Eng Manager"/></div>
           </div>
-          <div class="ff"><label>Linked Application (optional)</label><select id="i-app"><option value="">&#8212; None &#8212;</option></select></div>
+          <div class="ff"><label>Linked Application (optional)</label><select id="i-app"><option value="">None</option></select></div>
           <div class="ff"><label>Notes</label><textarea id="i-notes" placeholder="Topics to prep, questions to ask…"></textarea></div>
           <div class="form-acts">
             <button class="btn-p" data-action="addInterview">Save</button>
@@ -437,15 +437,16 @@ function setStatus(msg) { const el = document.getElementById('lastSync'); if (el
 
 // Supabase REST helper
 async function sbFetch(path, opts = {}) {
+  const { headers: extraHeaders, ...restOpts } = opts;
   const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    ...restOpts,
     headers: {
       'apikey': SUPABASE_KEY,
       'Authorization': 'Bearer ' + SUPABASE_KEY,
       'Content-Type': 'application/json',
       'Prefer': 'return=minimal',
-      ...opts.headers
-    },
-    ...opts
+      ...(extraHeaders || {})
+    }
   });
   if (!res.ok) { const t = await res.text(); throw new Error(res.status + ' ' + t); }
   return res;
@@ -1034,14 +1035,14 @@ function toggleForm(id) {
 function populateRecruiterDropdown() {
   const sel = document.getElementById('f-recruiter'); if (!sel) return;
   const cur = sel.value;
-  sel.innerHTML = '<option value="">&#8212; None &#8212;</option>' +
+  sel.innerHTML = '<option value="">None</option>' +
     [...D.recruiters].sort((a,b)=>(a.name||a.co||'').localeCompare(b.name||b.co||''))
     .map(r => '<option value="'+r.id+'"'+(r.id===cur?' selected':'')+'>'+(r.name||r.co)+(r.co&&r.name?' ('+r.co+')':'')+'</option>').join('');
 }
 function populateAppDropdown() {
   const sel = document.getElementById('i-app'); if (!sel) return;
   const cur = sel.value;
-  sel.innerHTML = '<option value="">&#8212; None &#8212;</option>' +
+  sel.innerHTML = '<option value="">None</option>' +
     [...D.apps].sort((a,b)=>(a.co+a.role).localeCompare(b.co+b.role))
     .map(a => '<option value="'+a.id+'"'+(a.id===cur?' selected':'')+'>'+a.co+' — '+a.role+' ('+a.date+')'+'</option>').join('');
 }
@@ -1594,7 +1595,7 @@ function saveModal() {
 function openAppEdit(id) {
   if (!_dbReady) { toast('Still loading, please wait…'); return; }
   const a = D.apps.find(x=>x.id===id); if(!a) return;
-  const recOpts = [{v:'',l:'&#8212; None &#8212;'}, ...D.recruiters
+  const recOpts = [{v:'',l:'None'}, ...D.recruiters
     .sort((x,y)=>(x.name||x.co||'').localeCompare(y.name||y.co||''))
     .map(r=>({v:r.id, l:(r.name||r.co)+(r.co&&r.name?' ('+r.co+')':'')}))  ];
   openEditModal(a.co + ' — ' + a.role, [
@@ -1637,7 +1638,7 @@ function openRecEdit(id) {
 
 function openModal(i) { // interview row click — opens edit modal
   if (!_dbReady) { toast('Still loading, please wait…'); return; }
-  const appOpts = [{v:'',l:'&#8212; None &#8212;'}, ...[...D.apps]
+  const appOpts = [{v:'',l:'None'}, ...[...D.apps]
     .sort((a,b)=>(a.co+a.role).localeCompare(b.co+b.role))
     .map(a=>({v:a.id, l:a.co+' — '+a.role+' ('+a.date+')'})) ];
   openEditModal(i.co, [
