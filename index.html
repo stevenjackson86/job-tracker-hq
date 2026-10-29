@@ -1042,7 +1042,7 @@ function populateAppDropdown() {
   const sel = document.getElementById('i-app'); if (!sel) return;
   const cur = sel.value;
   sel.innerHTML = '<option value="">&#8212; None &#8212;</option>' +
-    [...D.apps].sort((a,b)=>new Date(b.date)-new Date(a.date))
+    [...D.apps].sort((a,b)=>(a.co+a.role).localeCompare(b.co+b.role))
     .map(a => '<option value="'+a.id+'"'+(a.id===cur?' selected':'')+'>'+a.co+' — '+a.role+' ('+a.date+')'+'</option>').join('');
 }
 function toggleMobileNav() { document.getElementById('mobileNavOverlay').classList.toggle('open'); }
@@ -1638,7 +1638,7 @@ function openRecEdit(id) {
 function openModal(i) { // interview row click — opens edit modal
   if (!_dbReady) { toast('Still loading, please wait…'); return; }
   const appOpts = [{v:'',l:'&#8212; None &#8212;'}, ...[...D.apps]
-    .sort((a,b)=>new Date(b.date)-new Date(a.date))
+    .sort((a,b)=>(a.co+a.role).localeCompare(b.co+b.role))
     .map(a=>({v:a.id, l:a.co+' — '+a.role+' ('+a.date+')'})) ];
   openEditModal(i.co, [
     {key:'co',    label:'Company',             type:'text',          value:i.co},
