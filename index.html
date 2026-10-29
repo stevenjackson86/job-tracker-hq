@@ -276,6 +276,10 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
             </div>
             <div class="ff"><label>Link (optional)</label><input id="f-link" placeholder="https://…"/></div>
           </div>
+          <div class="fr">
+            <div class="ff"><label>Recruiter (optional)</label><select id="f-recruiter"><option value="">&#8212; None &#8212;</option></select></div>
+            <div class="ff"><label>Emp. Type</label><select id="f-emptype"><option value="direct">Direct/FTE</option><option value="contract">Contract</option></select></div>
+          </div>
           <div class="ff"><label>Notes</label><textarea id="f-notes" placeholder="Comp, referral contact, notes…"></textarea></div>
           <div class="form-acts">
             <button class="btn-p" data-action="addApp">Save</button>
@@ -321,6 +325,7 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
             <div class="ff"><label>Date & Time</label><input id="i-date" type="datetime-local"/></div>
             <div class="ff"><label>Interviewer(s)</label><input id="i-people" placeholder="Jane Smith, Eng Manager"/></div>
           </div>
+          <div class="ff"><label>Linked Application (optional)</label><select id="i-app"><option value="">&#8212; None &#8212;</option></select></div>
           <div class="ff"><label>Notes</label><textarea id="i-notes" placeholder="Topics to prep, questions to ask…"></textarea></div>
           <div class="form-acts">
             <button class="btn-p" data-action="addInterview">Save</button>
@@ -430,16 +435,15 @@ function setStatus(msg) { const el = document.getElementById('lastSync'); if (el
 
 // Supabase REST helper
 async function sbFetch(path, opts = {}) {
-  const { headers: extraHeaders, ...restOpts } = opts;
   const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
-    ...restOpts,
     headers: {
       'apikey': SUPABASE_KEY,
       'Authorization': 'Bearer ' + SUPABASE_KEY,
       'Content-Type': 'application/json',
       'Prefer': 'return=minimal',
-      ...extraHeaders
-    }
+      ...opts.headers
+    },
+    ...opts
   });
   if (!res.ok) { const t = await res.text(); throw new Error(res.status + ' ' + t); }
   return res;
@@ -1017,7 +1021,28 @@ function toast(msg) {
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2600);
 }
-function toggleForm(id) { document.getElementById(id).classList.toggle('open'); }
+function toggleForm(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+  if (el.classList.contains('open')) {
+    if (id === 'appForm') populateRecruiterDropdown();
+    if (id === 'intForm') populateAppDropdown();
+  }
+}
+function populateRecruiterDropdown() {
+  const sel = document.getElementById('f-recruiter'); if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">&#8212; None &#8212;</option>' +
+    [...D.recruiters].sort((a,b)=>(a.name||a.co||'').localeCompare(b.name||b.co||''))
+    .map(r => '<option value="'+r.id+'"'+(r.id===cur?' selected':'')+'>'+(r.name||r.co)+(r.co&&r.name?' ('+r.co+')':'')+'</option>').join('');
+}
+function populateAppDropdown() {
+  const sel = document.getElementById('i-app'); if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">&#8212; None &#8212;</option>' +
+    [...D.apps].sort((a,b)=>new Date(b.date)-new Date(a.date))
+    .map(a => '<option value="'+a.id+'"'+(a.id===cur?' selected':'')+'>'+a.co+' — '+a.role+' ('+a.date+')'+'</option>').join('');
+}
 function toggleMobileNav() { document.getElementById('mobileNavOverlay').classList.toggle('open'); }
 
 function nav(name) {
@@ -1103,26 +1128,31 @@ async function addApp() {
   const co = document.getElementById('f-co').value.trim();
   const role = document.getElementById('f-role').value.trim();
   if (!co || !role) { toast('Company and role required'); return; }
+  const recruiterId = document.getElementById('f-recruiter').value || null;
   const rec = {
     id: uid(), co, role,
     date: document.getElementById('f-date').value || today(),
     status: document.getElementById('f-status').value,
-    empType: 'direct',
+    empType: document.getElementById('f-emptype').value || 'direct',
     src: document.getElementById('f-src').value,
     link: document.getElementById('f-link').value.trim(),
     notes: document.getElementById('f-notes').value.trim(),
+    recruiterId: recruiterId || null,
     created: Date.now()
   };
   D.apps.unshift(rec);
   await saveRecord('apps', rec);
   ['f-co','f-role','f-link','f-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-recruiter').value = '';
   toggleForm('appForm');
-  if (!_dbReady) renderAll(); // db subscriptions trigger renderAll automatically
+  renderAll();
   toast(`Added ${co}`);
 }
 
 async function addInterview() {
-  const co = document.getElementById('i-co').value.trim();
+  const appId = document.getElementById('i-app').value || null;
+  let co = document.getElementById('i-co').value.trim();
+  if (!co && appId) { const la = D.apps.find(a=>a.id===appId); if(la) co = la.co; }
   if (!co) { toast('Company required'); return; }
   const rec = {
     id: uid(), co,
@@ -1130,14 +1160,16 @@ async function addInterview() {
     date: document.getElementById('i-date').value,
     people: document.getElementById('i-people').value.trim(),
     notes: document.getElementById('i-notes').value.trim(),
+    appId: appId || null,
     created: Date.now()
   };
   D.interviews.unshift(rec);
   await saveRecord('interviews', rec);
   ['i-co','i-people','i-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('i-app').value = '';
   toggleForm('intForm');
-  if (!_dbReady) renderAll();
-  toast(`Interview added: ${co}`);
+  renderAll();
+  toast(`Interview added: ${rec.co}`);
 }
 
 async function addRecruiter() {
@@ -1157,7 +1189,7 @@ async function addRecruiter() {
   await saveRecord('recruiters', rec);
   ['r-name','r-co','r-roles','r-notes'].forEach(id => document.getElementById(id).value = '');
   toggleForm('recForm');
-  if (!_dbReady) renderAll();
+  renderAll();
   toast('Recruiter lead added');
 }
 
@@ -1207,20 +1239,20 @@ async function updateIntField(id, key, val) {
 
 async function delApp(id) {
   D.apps = D.apps.filter(a => a.id !== id);
-  renderAll();
   await deleteRecord('apps', id);
+  if (!dbReady) renderAll();
   toast('Removed');
 }
 async function delInt(id) {
   D.interviews = D.interviews.filter(a => a.id !== id);
-  renderAll();
   await deleteRecord('interviews', id);
+  if (!dbReady) renderAll();
   toast('Removed');
 }
 async function delRec(id) {
   D.recruiters = D.recruiters.filter(a => a.id !== id);
-  renderAll();
   await deleteRecord('recruiters', id);
+  if (!dbReady) renderAll();
   toast('Removed');
 }
 
@@ -1373,7 +1405,7 @@ function renderApps() {
     return;
   }
   tb.innerHTML = apps.map(a=>`<tr class="clickable" data-action="openAppEdit" data-id="${a.id}">
-    <td><strong>${esc(a.co)}</strong>${a.notes?`<br><span style="font-size:11px;color:var(--tx3)">${esc(a.notes.slice(0,60))}</span>`:''}</td>
+    ${(()=>{const lr=a.recruiterId?D.recruiters.find(r=>r.id===a.recruiterId):null;return '<td><strong>'+esc(a.co)+'</strong>'+(lr?'<br><span style="font-size:10px;color:var(--pur)">via '+esc(lr.name||lr.co)+'</span>':'')+(a.notes?'<br><span style="font-size:11px;color:var(--tx3)">'+esc(a.notes.slice(0,60))+'</span>':'')+'</td>';})()}
     <td style="color:var(--tx2);font-size:12px">${esc(a.role)}</td>
     <td><span class="tag">${esc(a.src||'')}</span></td>
     <td style="color:var(--tx3);white-space:nowrap">${fmtD(a.date)}</td>
@@ -1543,20 +1575,24 @@ function saveModal() {
 function openAppEdit(id) {
   if (!_dbReady) { toast('Still loading, please wait…'); return; }
   const a = D.apps.find(x=>x.id===id); if(!a) return;
+  const recOpts = [{v:'',l:'&#8212; None &#8212;'}, ...D.recruiters
+    .sort((x,y)=>(x.name||x.co||'').localeCompare(y.name||y.co||''))
+    .map(r=>({v:r.id, l:(r.name||r.co)+(r.co&&r.name?' ('+r.co+')':'')}))  ];
   openEditModal(a.co + ' — ' + a.role, [
-    {key:'co',      label:'Company',         type:'text',     value:a.co},
-    {key:'role',    label:'Role',            type:'text',     value:a.role},
-    {key:'date',    label:'Date Applied',    type:'date',     value:a.date},
-    {key:'empType', label:'Employment Type', type:'select',   value:a.empType||'direct', options:[
+    {key:'co',          label:'Company',          type:'text',    value:a.co},
+    {key:'role',        label:'Role',             type:'text',    value:a.role},
+    {key:'date',        label:'Date Applied',     type:'date',    value:a.date},
+    {key:'empType',     label:'Employment Type',  type:'select',  value:a.empType||'direct', options:[
       {v:'direct',l:'Direct/FTE'},{v:'contract',l:'Contract'}
     ]},
-    {key:'status',  label:'Status',          type:'select',   value:a.status, options:[
+    {key:'status',      label:'Status',           type:'select',  value:a.status, options:[
       {v:'applied',l:'Applied'},{v:'screening',l:'Screening'},{v:'interview',l:'Interview'},
       {v:'offer',l:'Offer'},{v:'offer_rejected',l:'Offer Rejected'},{v:'rejected',l:'Rejected'},
       {v:'ghosted',l:'Ghosted'},{v:'hold',l:'On Hold'}
     ]},
-    {key:'src',     label:'Source',          type:'text',     value:a.src},
-    {key:'notes',   label:'Notes',           type:'textarea', value:a.notes},
+    {key:'recruiterId', label:'Linked Recruiter', type:'select',  value:a.recruiterId||'', options:recOpts},
+    {key:'src',         label:'Source',           type:'text',    value:a.src},
+    {key:'notes',       label:'Notes',            type:'textarea',value:a.notes},
   ], 'apps', id);
 }
 
@@ -1582,17 +1618,21 @@ function openRecEdit(id) {
 
 function openModal(i) { // interview row click — opens edit modal
   if (!_dbReady) { toast('Still loading, please wait…'); return; }
+  const appOpts = [{v:'',l:'&#8212; None &#8212;'}, ...[...D.apps]
+    .sort((a,b)=>new Date(b.date)-new Date(a.date))
+    .map(a=>({v:a.id, l:a.co+' — '+a.role+' ('+a.date+')'})) ];
   openEditModal(i.co, [
-    {key:'co',    label:'Company',    type:'text',     value:i.co},
-    {key:'round', label:'Round',      type:'select',   value:i.round, options:[
+    {key:'co',    label:'Company',             type:'text',          value:i.co},
+    {key:'round', label:'Round',               type:'select',        value:i.round, options:[
       {v:'Phone Screen',l:'Phone Screen'},{v:'Recruiter Screen',l:'Recruiter Screen'},
       {v:'Technical Screen',l:'Technical Screen'},{v:'Hiring Manager',l:'Hiring Manager'},
       {v:'Panel / Loop',l:'Panel / Loop'},{v:'Final Round',l:'Final Round'},
       {v:'Take-Home',l:'Take-Home'},{v:'Offer Discussion',l:'Offer Discussion'}
     ]},
-    {key:'date',   label:'Date & Time', type:'datetime-local', value:i.date},
-    {key:'people', label:'With',        type:'text',     value:i.people},
-    {key:'notes',  label:'Notes',       type:'textarea', value:i.notes},
+    {key:'date',   label:'Date & Time',        type:'datetime-local',value:i.date},
+    {key:'people', label:'With',               type:'text',          value:i.people},
+    {key:'appId',  label:'Linked Application', type:'select',        value:i.appId||'', options:appOpts},
+    {key:'notes',  label:'Notes',              type:'textarea',      value:i.notes},
   ], 'interviews', i.id);
 }
 
@@ -1608,8 +1648,9 @@ function renderInterviews() {
   tb.innerHTML = sorted.map(i=>{
     const upcoming = new Date(i.date).getTime() > now;
     const dataStr = encodeURIComponent(JSON.stringify(i));
+    const lApp = i.appId ? D.apps.find(a=>a.id===i.appId) : null;
     return `<tr class="clickable" data-action="openIntEdit" data-id="${i.id}" style="${upcoming?'background:rgba(139,92,246,.04)':''}">
-      <td><strong>${esc(i.co)}</strong>${upcoming?'<span style="margin-left:6px;font-size:10px;color:var(--pur);font-weight:600">UPCOMING</span>':''}</td>
+      <td><strong>${esc(i.co)}</strong>${upcoming?'<span style="margin-left:6px;font-size:10px;color:var(--pur);font-weight:600">UPCOMING</span>':''}${lApp?'<br><span style="font-size:10px;color:var(--bluel)">linked: '+esc(lApp.role)+'</span>':''}</td>
       <td style="color:var(--tx2)">${esc(i.round)}</td>
       <td style="color:var(--tx3);white-space:nowrap">${fmtDT(i.date)}</td>
       <td style="color:var(--tx3);font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(i.people||'—')}</td>
@@ -1630,7 +1671,7 @@ function renderRecruiters() {
   }
   const statusMap = {new:'applied',responded:'screening','call-scheduled':'callsched',pursuing:'pursuing',passed:'rejected'};
   const labelMap = {new:'New Lead',responded:'Responded','call-scheduled':'Call Sched.',pursuing:'Pursuing',passed:'Passed'};
-  tb.innerHTML = recs.map(r=>`<tr class="clickable" data-action="openRecEdit" data-id="${r.id}">
+  tb.innerHTML = recs.map(r=>`<tr data-id="${r.id}">
     <td><strong>${esc(r.name||'—')}</strong></td>
     <td style="color:var(--tx2)">${esc(r.co||'—')}</td>
     <td><span class="tag">${esc(r.channel||'')}</span></td>
