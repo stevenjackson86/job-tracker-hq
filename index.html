@@ -1536,7 +1536,7 @@ function saveModal() {
     }, 50);
   } catch(e) { toast('Error: ' + e.message); }
   saveLocal();
-  if (db) db.collection(savedColl).doc(String(savedRec.id)).set(savedRec).catch(e => console.warn('db write:', e));
+  saveRecord(savedColl, savedRec);
 }
 
 function openAppEdit(id) {
