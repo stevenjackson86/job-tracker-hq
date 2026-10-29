@@ -1207,20 +1207,20 @@ async function updateIntField(id, key, val) {
 
 async function delApp(id) {
   D.apps = D.apps.filter(a => a.id !== id);
+  renderAll();
   await deleteRecord('apps', id);
-  if (!_dbReady) renderAll();
   toast('Removed');
 }
 async function delInt(id) {
   D.interviews = D.interviews.filter(a => a.id !== id);
+  renderAll();
   await deleteRecord('interviews', id);
-  if (!_dbReady) renderAll();
   toast('Removed');
 }
 async function delRec(id) {
   D.recruiters = D.recruiters.filter(a => a.id !== id);
+  renderAll();
   await deleteRecord('recruiters', id);
-  if (!_dbReady) renderAll();
   toast('Removed');
 }
 
@@ -1543,16 +1543,20 @@ function saveModal() {
 function openAppEdit(id) {
   if (!_dbReady) { toast('Still loading, please wait…'); return; }
   const a = D.apps.find(x=>x.id===id); if(!a) return;
-  const statusLabels = {applied:'Applied',screening:'Screening',interview:'Interview',offer:'Offer',offer_rejected:'Offer Rejected',rejected:'Rejected',ghosted:'Ghosted',hold:'On Hold'};
-  const empLabels = {direct:'Direct/FTE',contract:'Contract'};
   openEditModal(a.co + ' — ' + a.role, [
-    {key:'co',    label:'Company',  type:'text',     value:a.co},
-    {key:'role',  label:'Role',     type:'text',     value:a.role},
-    {key:'date',  label:'Date Applied', type:'date', value:a.date},
-    {key:'_empTypeDisplay', label:'Employment Type (use table dropdown or chat to change)', type:'readonly', value:empLabels[a.empType]||a.empType||'Direct/FTE'},
-    {key:'_statusDisplay', label:'Status (use table dropdown or chat to change)', type:'readonly', value:statusLabels[a.status]||a.status},
-    {key:'src',   label:'Source',   type:'text',     value:a.src},
-    {key:'notes', label:'Notes',    type:'textarea', value:a.notes},
+    {key:'co',      label:'Company',         type:'text',     value:a.co},
+    {key:'role',    label:'Role',            type:'text',     value:a.role},
+    {key:'date',    label:'Date Applied',    type:'date',     value:a.date},
+    {key:'empType', label:'Employment Type', type:'select',   value:a.empType||'direct', options:[
+      {v:'direct',l:'Direct/FTE'},{v:'contract',l:'Contract'}
+    ]},
+    {key:'status',  label:'Status',          type:'select',   value:a.status, options:[
+      {v:'applied',l:'Applied'},{v:'screening',l:'Screening'},{v:'interview',l:'Interview'},
+      {v:'offer',l:'Offer'},{v:'offer_rejected',l:'Offer Rejected'},{v:'rejected',l:'Rejected'},
+      {v:'ghosted',l:'Ghosted'},{v:'hold',l:'On Hold'}
+    ]},
+    {key:'src',     label:'Source',          type:'text',     value:a.src},
+    {key:'notes',   label:'Notes',           type:'textarea', value:a.notes},
   ], 'apps', id);
 }
 
@@ -1626,7 +1630,7 @@ function renderRecruiters() {
   }
   const statusMap = {new:'applied',responded:'screening','call-scheduled':'callsched',pursuing:'pursuing',passed:'rejected'};
   const labelMap = {new:'New Lead',responded:'Responded','call-scheduled':'Call Sched.',pursuing:'Pursuing',passed:'Passed'};
-  tb.innerHTML = recs.map(r=>`<tr data-id="${r.id}">
+  tb.innerHTML = recs.map(r=>`<tr class="clickable" data-action="openRecEdit" data-id="${r.id}">
     <td><strong>${esc(r.name||'—')}</strong></td>
     <td style="color:var(--tx2)">${esc(r.co||'—')}</td>
     <td><span class="tag">${esc(r.channel||'')}</span></td>
