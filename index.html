@@ -156,6 +156,8 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
 .m-field select option{background:var(--surf2)}
 .m-field textarea{resize:vertical;min-height:70px}
 .m-btn-group{display:flex;flex-wrap:wrap;gap:6px}
+.m-native-sel{width:100%;background:var(--surf);border:1px solid var(--brd2);color:var(--tx);border-radius:6px;padding:8px 10px;font-size:13px;font-family:inherit;cursor:pointer;outline:none}
+.m-native-sel:focus{border-color:var(--blue)}
 .m-btn-opt{background:var(--bg);border:1px solid var(--brd2);color:var(--tx2);border-radius:6px;padding:7px 12px;font-size:12px;font-family:inherit;cursor:pointer;transition:all .12s}
 .m-btn-opt:hover{border-color:var(--blue)}
 .m-btn-opt.active{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
@@ -1433,10 +1435,17 @@ function openEditModal(title, fields, coll, id) {
     if (f.type === 'readonly') {
       input = `<div style="padding:7px 10px;color:var(--tx2);font-size:13px;background:var(--bg);border:1px solid var(--brd);border-radius:6px">${esc(f.value||'—')}</div>`;
     } else if (f.type === 'select') {
-      // Button group instead of native <select> — more reliable across mobile webviews
-      input = `<div class="m-btn-group" id="mf-${f.key}" data-field-key="${f.key}">${f.options.map(o=>
-        `<button type="button" class="m-btn-opt${o.v===f.value?' active':''}" data-val="${esc(o.v)}">${esc(o.l)}</button>`
-      ).join('')}</div>`;
+      if (f.options.length > 6) {
+        // Native <select> for long lists (recruiter/app pickers) — button groups are unusable at scale
+        input = `<select class="m-native-sel" id="mf-${f.key}" data-field-key="${f.key}">${f.options.map(o=>
+          `<option value="${esc(o.v)}"${o.v===f.value?' selected':''}>${esc(o.l)}</option>`
+        ).join('')}</select>`;
+      } else {
+        // Button group for short option sets (status, empType, channel)
+        input = `<div class="m-btn-group" id="mf-${f.key}" data-field-key="${f.key}">${f.options.map(o=>
+          `<button type="button" class="m-btn-opt${o.v===f.value?' active':''}" data-val="${esc(o.v)}">${esc(o.l)}</button>`
+        ).join('')}</div>`;
+      }
     } else if (f.type === 'textarea') {
       input = `<textarea id="mf-${f.key}"></textarea>`;
     } else {
@@ -1449,7 +1458,11 @@ function openEditModal(title, fields, coll, id) {
     if (f.type === 'readonly') return;
     const el = document.getElementById('mf-'+f.key);
     if (!el) return;
-    if (f.type === 'select') return; // button group handles its own state via data-val/active class
+    if (f.type === 'select' && f.options.length <= 6) return; // button group handles its own state
+    if (f.type === 'select' && f.options.length > 6) {
+      el.addEventListener('change', () => { f.value = el.value; });
+      return;
+    }
     el.value = f.value || '';
     el.addEventListener('change', () => { f.value = el.value; });
     el.addEventListener('input', () => { f.value = el.value; });
@@ -1542,7 +1555,13 @@ function saveModal() {
     if (f.type === 'readonly') return; // display-only, not a real field to save
     let finalVal;
     if (f.type === 'select') {
-      finalVal = f.value; // captured live from button-group taps
+      if (f.options.length > 6) {
+        // Native select — read directly from DOM
+        const el = document.getElementById('mf-' + f.key);
+        finalVal = el ? el.value : f.value;
+      } else {
+        finalVal = f.value; // captured live from button-group taps
+      }
     } else {
       const el = document.getElementById('mf-' + f.key);
       finalVal = el ? el.value : f.value;
