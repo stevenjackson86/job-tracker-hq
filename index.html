@@ -430,15 +430,16 @@ function setStatus(msg) { const el = document.getElementById('lastSync'); if (el
 
 // Supabase REST helper
 async function sbFetch(path, opts = {}) {
+  const { headers: extraHeaders, ...restOpts } = opts;
   const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    ...restOpts,
     headers: {
       'apikey': SUPABASE_KEY,
       'Authorization': 'Bearer ' + SUPABASE_KEY,
       'Content-Type': 'application/json',
       'Prefer': 'return=minimal',
-      ...opts.headers
-    },
-    ...opts
+      ...extraHeaders
+    }
   });
   if (!res.ok) { const t = await res.text(); throw new Error(res.status + ' ' + t); }
   return res;
@@ -1116,7 +1117,7 @@ async function addApp() {
   await saveRecord('apps', rec);
   ['f-co','f-role','f-link','f-notes'].forEach(id => document.getElementById(id).value = '');
   toggleForm('appForm');
-  if (!dbReady) renderAll(); // db subscriptions trigger renderAll automatically
+  if (!_dbReady) renderAll(); // db subscriptions trigger renderAll automatically
   toast(`Added ${co}`);
 }
 
@@ -1135,7 +1136,7 @@ async function addInterview() {
   await saveRecord('interviews', rec);
   ['i-co','i-people','i-notes'].forEach(id => document.getElementById(id).value = '');
   toggleForm('intForm');
-  if (!dbReady) renderAll();
+  if (!_dbReady) renderAll();
   toast(`Interview added: ${co}`);
 }
 
@@ -1156,7 +1157,7 @@ async function addRecruiter() {
   await saveRecord('recruiters', rec);
   ['r-name','r-co','r-roles','r-notes'].forEach(id => document.getElementById(id).value = '');
   toggleForm('recForm');
-  if (!dbReady) renderAll();
+  if (!_dbReady) renderAll();
   toast('Recruiter lead added');
 }
 
@@ -1207,19 +1208,19 @@ async function updateIntField(id, key, val) {
 async function delApp(id) {
   D.apps = D.apps.filter(a => a.id !== id);
   await deleteRecord('apps', id);
-  if (!dbReady) renderAll();
+  if (!_dbReady) renderAll();
   toast('Removed');
 }
 async function delInt(id) {
   D.interviews = D.interviews.filter(a => a.id !== id);
   await deleteRecord('interviews', id);
-  if (!dbReady) renderAll();
+  if (!_dbReady) renderAll();
   toast('Removed');
 }
 async function delRec(id) {
   D.recruiters = D.recruiters.filter(a => a.id !== id);
   await deleteRecord('recruiters', id);
-  if (!dbReady) renderAll();
+  if (!_dbReady) renderAll();
   toast('Removed');
 }
 
