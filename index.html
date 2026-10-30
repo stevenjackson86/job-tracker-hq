@@ -43,7 +43,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .pg-sub{font-size:12px;color:var(--tx3);margin-top:3px}
 /* STATS */
 .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:20px}
-.stat{background:var(--surf);border:1px solid var(--brd);border-radius:10px;padding:14px}
+.stat{background:var(--surf);border:1px solid var(--brd);border-radius:10px;padding:14px;transition:border-color .15s}
+.stat[data-action="statNav"]:hover{border-color:var(--blue)}
 .stat-val{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;margin-bottom:3px}
 .stat-lbl{font-size:11px;color:var(--tx3);font-weight:500}
 .s-blue .stat-val{color:var(--bluel)}.s-green .stat-val{color:var(--green)}
@@ -62,6 +63,7 @@ th{text-align:left;font-size:11px;font-weight:600;color:var(--tx3);text-transfor
 td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--brd);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(255,255,255,.02)}
+@media print{nav,.hdr-r,#page-dashboard,#page-apps,#page-interviews,#page-recruiters,.mobile-nav-overlay,button,.sec-act{display:none!important}#page-report{display:block!important}body,html{background:#fff;color:#000}.app{display:block}main{padding:0;margin:0}.rpt-sec{break-inside:avoid;border:1px solid #ddd;margin-bottom:12px}}
 @media(max-width:640px){th{padding:7px 10px;font-size:10px}td{padding:8px 10px;font-size:12px}.main{padding:12px}}
 /* STATUS PILLS */
 .pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:600;white-space:nowrap}
@@ -212,11 +214,11 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
         <div class="pg-sub" id="dash-date"></div>
       </div>
       <div class="stats" id="stats-grid">
-        <div class="stat s-blue"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">Total Applications</div></div>
-        <div class="stat s-yel"><div class="stat-val" id="s-screen">0</div><div class="stat-lbl">Screening</div></div>
-        <div class="stat s-pur"><div class="stat-val" id="s-inter">0</div><div class="stat-lbl">Interviewing</div></div>
-        <div class="stat s-green"><div class="stat-val" id="s-offer">0</div><div class="stat-lbl">Offers</div></div>
-        <div class="stat s-red"><div class="stat-val" id="s-reject">0</div><div class="stat-lbl">Rejected</div></div>
+        <div class="stat s-blue" style="cursor:pointer" data-action="statNav" data-target="apps" data-filter=""><div class="stat-val" id="s-total">0</div><div class="stat-lbl">Total Applications</div></div>
+        <div class="stat s-yel" style="cursor:pointer" data-action="statNav" data-target="apps" data-filter="screening"><div class="stat-val" id="s-screen">0</div><div class="stat-lbl">Screening</div></div>
+        <div class="stat s-pur" style="cursor:pointer" data-action="statNav" data-target="interviews" data-filter=""><div class="stat-val" id="s-inter">0</div><div class="stat-lbl">Interviewing</div></div>
+        <div class="stat s-green" style="cursor:pointer" data-action="statNav" data-target="apps" data-filter="offer"><div class="stat-val" id="s-offer">0</div><div class="stat-lbl">Active Offers</div></div>
+        <div class="stat s-red" style="cursor:pointer" data-action="statNav" data-target="apps" data-filter="rejected"><div class="stat-val" id="s-reject">0</div><div class="stat-lbl">Rejected</div></div>
         <div class="stat"><div class="stat-val" id="s-rate" style="color:var(--tx)">0%</div><div class="stat-lbl">Response Rate</div></div>
       </div>
       <div class="sec">
@@ -249,7 +251,10 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
               <option value="hold">On Hold</option>
             </select>
           </div>
-          <button class="sec-act" data-action="toggle-appForm">+ Add</button>
+          <div style="display:flex;gap:6px">
+            <button class="sec-act" data-action="exportApps">⬇ CSV</button>
+            <button class="sec-act" data-action="toggle-appForm">+ Add</button>
+          </div>
         </div>
         <div class="add-form" id="appForm">
           <div class="fr">
@@ -312,7 +317,7 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
     <div class="page" id="page-interviews">
       <div class="pg-hdr"><div class="pg-title">Interviews</div><div class="pg-sub">Phone screens, panels, and all interview rounds</div></div>
       <div class="sec">
-        <div class="sec-hd"><div class="sec-title">Interview Log</div><button class="sec-act" data-action="toggle-intForm">+ Add</button></div>
+        <div class="sec-hd"><div class="sec-title">Interview Log</div><div style="display:flex;gap:6px"><button class="sec-act" data-action="exportInts">⬇ CSV</button><button class="sec-act" data-action="toggle-intForm">+ Add</button></div></div>
         <div class="add-form" id="intForm">
           <div class="fr">
             <div class="ff"><label>Company</label><input id="i-co" placeholder="Acme Corp"/></div>
@@ -357,7 +362,7 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
     <div class="page" id="page-recruiters">
       <div class="pg-hdr"><div class="pg-title">Recruiter Outreach</div><div class="pg-sub">Inbound leads, cold calls, LinkedIn DMs</div></div>
       <div class="sec">
-        <div class="sec-hd"><div class="sec-title">Recruiter Log</div><button class="sec-act" data-action="toggle-recForm">+ Add</button></div>
+        <div class="sec-hd"><div class="sec-title">Recruiter Log</div><div style="display:flex;gap:6px"><button class="sec-act" data-action="exportRecs">⬇ CSV</button><button class="sec-act" data-action="toggle-recForm">+ Add</button></div></div>
         <div class="add-form" id="recForm">
           <div class="fr">
             <div class="ff"><label>Recruiter Name</label><input id="r-name" placeholder="Jane Smith"/></div>
@@ -406,7 +411,10 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
 
     <!-- REPORT -->
     <div class="page" id="page-report">
-      <div class="pg-hdr"><div class="pg-title">Report</div><div class="pg-sub">Oct 2, 2026 – present · All figures reflect current status in tracker</div></div>
+      <div class="pg-hdr" style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div><div class="pg-title">Report</div><div class="pg-sub">Oct 2, 2026 – present · All figures reflect current status in tracker</div></div>
+        <button class="sec-act" style="margin-top:4px;white-space:nowrap" data-action="exportReportPDF">⬇ PDF</button>
+      </div>
       <div id="rpt-content"></div>
     </div>
 
@@ -1471,6 +1479,51 @@ function openEditModal(title, fields, coll, id) {
   document.getElementById('modalOverlay').style.display = 'flex';
 }
 
+// ── EXPORTS ───────────────────────────────────────────────────
+function csvRow(vals) {
+  return vals.map(v => {
+    const s = (v == null ? '' : String(v)).replace(/"/g, '""');
+    return /[",\n\r]/.test(s) ? `"${s}"` : s;
+  }).join(',');
+}
+function downloadCSV(filename, rows) {
+  const blob = new Blob([rows.join('\r\n')], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function exportApps() {
+  const header = csvRow(['Date','Company','Role','Status','Type','Source','Recruiter','Notes','Link']);
+  const rows = [...D.apps].sort((a,b)=>a.date<b.date?1:-1).map(a => {
+    const rec = a.recruiterId ? D.recruiters.find(r=>r.id===a.recruiterId) : null;
+    return csvRow([a.date, a.co, a.role, a.status, a.empType||'direct', a.src, rec?(rec.name||rec.co):'', a.notes||'', a.link||'']);
+  });
+  downloadCSV(`applications-${today()}.csv`, [header, ...rows]);
+  toast('Applications exported');
+}
+function exportInts() {
+  const header = csvRow(['Date','Company','Round','With','Linked App','Notes']);
+  const rows = [...D.interviews].sort((a,b)=>a.date<b.date?1:-1).map(i => {
+    const app = i.appId ? D.apps.find(a=>a.id===i.appId) : null;
+    return csvRow([i.date, i.co, i.round, i.people||'', app?(app.co+' — '+app.role):'', i.notes||'']);
+  });
+  downloadCSV(`interviews-${today()}.csv`, [header, ...rows]);
+  toast('Interviews exported');
+}
+function exportRecs() {
+  const header = csvRow(['Date','Name','Company','Channel','Roles','Status','Notes']);
+  const rows = [...D.recruiters].sort((a,b)=>a.date<b.date?1:-1).map(r =>
+    csvRow([r.date, r.name||'', r.co||'', r.channel||'', r.roles||'', r.status||'', r.notes||''])
+  );
+  downloadCSV(`recruiters-${today()}.csv`, [header, ...rows]);
+  toast('Recruiters exported');
+}
+function exportReportPDF() {
+  window.print();
+}
+
 // Master delegated event handler — replaces all inline onclick/oninput/onchange
 document.addEventListener('click', e => {
   // Modal button-group option tap
@@ -1511,6 +1564,22 @@ document.addEventListener('click', e => {
   else if (a === 'addApp') addApp();
   else if (a === 'addInterview') addInterview();
   else if (a === 'addRecruiter') addRecruiter();
+  else if (a === 'statNav') {
+    const target = t.dataset.target;
+    const filter = t.dataset.filter;
+    showPage(target);
+    if (target === 'apps' && filter) {
+      document.getElementById('filter-status').value = filter;
+      renderApps();
+    } else if (target === 'apps') {
+      document.getElementById('filter-status').value = '';
+      renderApps();
+    }
+  }
+  else if (a === 'exportApps') exportApps();
+  else if (a === 'exportInts') exportInts();
+  else if (a === 'exportRecs') exportRecs();
+  else if (a === 'exportReportPDF') exportReportPDF();
   else if (a === 'sortApps') sortApps(col);
   else if (a === 'sortInts') sortInts(col);
   else if (a === 'sortRecs') sortRecs(col);
@@ -1561,7 +1630,10 @@ function saveModal() {
         const el = document.getElementById('mf-' + f.key);
         finalVal = el ? el.value : f.value;
       } else {
-        finalVal = f.value; // captured live from button-group taps
+        // Read active button directly from DOM — more reliable than live f.value tap tracking
+        const grp = document.getElementById('mf-' + f.key);
+        const activeBtn = grp ? grp.querySelector('.m-btn-opt.active') : null;
+        finalVal = activeBtn ? activeBtn.dataset.val : f.value;
       }
     } else {
       const el = document.getElementById('mf-' + f.key);
@@ -1799,9 +1871,8 @@ function renderReport() {
         ${(()=>{
           const submitted = allApps.length; // every application ever sent, regardless of current status
           const posRate = submitted>0 ? Math.round((allScreen+allInter+allOffer)/submitted*100) : 0;
-          const rejRate = submitted>0 ? Math.round((reject+hold)/submitted*100) : 0;
-          const totRate = submitted>0 ? Math.round((allScreen+allInter+allOffer+reject+hold)/submitted*100) : 0;
-          const col = r => r>=20?'var(--green)':r>=10?'var(--yel)':'var(--slate)';
+          const rejRate = submitted>0 ? Math.round((reject)/submitted*100) : 0;
+          const responseRate = submitted>0 ? Math.round((allScreen+allInter+allOffer+reject)/submitted*100) : 0;
           return `<div style="margin-top:14px;display:flex;gap:6px;justify-content:space-between">
             <div style="text-align:center;flex:1">
               <div class="rate-big" style="color:var(--green)">${posRate}%</div>
@@ -1811,12 +1882,12 @@ function renderReport() {
             <div style="text-align:center;flex:1">
               <div class="rate-big" style="color:var(--red)">${rejRate}%</div>
               <div style="font-size:11px;color:var(--tx3);margin-top:2px">Rejection</div>
-              <div style="font-size:10px;color:var(--tx3)">rejected+hold</div>
+              <div style="font-size:10px;color:var(--tx3)">rejected only</div>
             </div>
             <div style="text-align:center;flex:1">
-              <div class="rate-big" style="color:var(--bluel)">${totRate}%</div>
-              <div style="font-size:11px;color:var(--tx3);margin-top:2px">Total</div>
-              <div style="font-size:10px;color:var(--tx3)">all outcomes</div>
+              <div class="rate-big" style="color:var(--bluel)">${responseRate}%</div>
+              <div style="font-size:11px;color:var(--tx3);margin-top:2px">Response Rate</div>
+              <div style="font-size:10px;color:var(--tx3)">any reply / total</div>
             </div>
           </div>`;
         })()}
