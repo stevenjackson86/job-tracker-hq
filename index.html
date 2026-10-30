@@ -1567,7 +1567,7 @@ document.addEventListener('click', e => {
   else if (a === 'statNav') {
     const target = t.dataset.target;
     const filter = t.dataset.filter;
-    showPage(target);
+    nav(target);
     if (target === 'apps' && filter) {
       document.getElementById('filter-status').value = filter;
       renderApps();
@@ -1763,7 +1763,7 @@ function renderRecruiters() {
   }
   const statusMap = {new:'applied',responded:'screening','call-scheduled':'callsched',pursuing:'pursuing',passed:'rejected'};
   const labelMap = {new:'New Lead',responded:'Responded','call-scheduled':'Call Sched.',pursuing:'Pursuing',passed:'Passed'};
-  tb.innerHTML = recs.map(r=>`<tr data-id="${r.id}">
+  tb.innerHTML = recs.map(r=>`<tr class="clickable" data-action="openRecEdit" data-id="${r.id}">
     <td><strong>${esc(r.name||'—')}</strong></td>
     <td style="color:var(--tx2)">${esc(r.co||'—')}</td>
     <td><span class="tag">${esc(r.channel||'')}</span></td>
