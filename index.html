@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Job Search HQ — Steven Jackson</title>
+<title>Job Search HQ</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
 <style>
 :root {
@@ -1354,7 +1354,8 @@ function renderAll() {
   const reject = apps.filter(a=>a.status==='rejected'||a.status==='offer_rejected').length;
   const hold = apps.filter(a=>a.status==='hold').length;
   // responded = any app that ever got any reply, counted once (current status irrelevant)
-  const responded = apps.filter(a=>a.status !== 'applied' && a.status !== 'ghosted').length;
+  // includes: any non-applied/ghosted status, OR has a recruiter linked to it
+  const responded = apps.filter(a=>(a.status !== 'applied' && a.status !== 'ghosted') || !!a.recruiterId).length;
   const rate = submitted > 0 ? Math.round((responded/submitted)*100) : 0;
 
   document.getElementById('s-total').textContent = submitted;
@@ -1896,7 +1897,7 @@ function renderReport() {
           const submitted = allApps.length; // every application ever sent, regardless of current status
           const posRate = submitted>0 ? Math.round((allScreen+allInter+allOffer)/submitted*100) : 0;
           const rejRate = submitted>0 ? Math.round((reject)/submitted*100) : 0;
-          const responseRate = submitted>0 ? Math.round(allApps.filter(a=>a.status!=='applied'&&a.status!=='ghosted').length/submitted*100) : 0;
+          const responseRate = submitted>0 ? Math.round(allApps.filter(a=>(a.status!=='applied'&&a.status!=='ghosted')||!!a.recruiterId).length/submitted*100) : 0;
           return `<div style="margin-top:14px;display:flex;gap:6px;justify-content:space-between">
             <div style="text-align:center;flex:1">
               <div class="rate-big" style="color:var(--green)">${posRate}%</div>
