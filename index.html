@@ -104,8 +104,11 @@ th.sortable.asc::after{content:' ↑';color:var(--bluel)}
 th.sortable.desc::after{content:' ↓';color:var(--bluel)}
 /* SEARCH BAR */
 .search-wrap{padding:10px 16px;border-bottom:1px solid var(--brd)}
-.search-input{width:100%;background:var(--bg);border:1px solid var(--brd2);color:var(--tx);border-radius:6px;padding:7px 11px 7px 30px;font-size:13px;font-family:inherit;outline:none;transition:border-color .12s}
+.search-input{width:100%;background:var(--bg);border:1px solid var(--brd2);color:var(--tx);border-radius:6px;padding:7px 30px 7px 30px;font-size:13px;font-family:inherit;outline:none;transition:border-color .12s}
 .search-input:focus{border-color:var(--blue)}
+.search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--tx3);cursor:pointer;font-size:14px;line-height:1;padding:2px 4px;display:none}
+.search-clear:hover{color:var(--tx)}
+.search-clear.visible{display:block}
 .search-wrap-inner{position:relative}
 .search-wrap-inner::before{content:'⌕';position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--tx3);font-size:14px;pointer-events:none}
 /* STATUS SELECT inline */
@@ -296,6 +299,7 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
         <div class="search-wrap">
           <div class="search-wrap-inner">
             <input class="search-input" id="app-search" placeholder="Search company, role, or source…" data-oninput="renderApps">
+            <button class="search-clear" id="app-search-clear" data-action="clearSearch" data-target="app-search" data-render="renderApps">✕</button>
           </div>
         </div>
         <div class="table-wrap"><table>
@@ -342,6 +346,7 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
         <div class="search-wrap">
           <div class="search-wrap-inner">
             <input class="search-input" id="int-search" placeholder="Search company or round…" data-oninput="renderInterviews">
+            <button class="search-clear" id="int-search-clear" data-action="clearSearch" data-target="int-search" data-render="renderInterviews">✕</button>
           </div>
         </div>
         <div class="table-wrap"><table>
@@ -392,6 +397,7 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
         <div class="search-wrap">
           <div class="search-wrap-inner">
             <input class="search-input" id="rec-search" placeholder="Search recruiter, company, or role…" data-oninput="renderRecruiters">
+            <button class="search-clear" id="rec-search-clear" data-action="clearSearch" data-target="rec-search" data-render="renderRecruiters">✕</button>
           </div>
         </div>
         <div class="table-wrap"><table>
@@ -1479,6 +1485,12 @@ function openEditModal(title, fields, coll, id) {
   document.getElementById('modalOverlay').style.display = 'flex';
 }
 
+function toggleClearBtn(inputId) {
+  const inp = document.getElementById(inputId);
+  const btn = document.getElementById(inputId + '-clear');
+  if (inp && btn) btn.classList.toggle('visible', inp.value.length > 0);
+}
+
 // ── EXPORTS ───────────────────────────────────────────────────
 function csvRow(vals) {
   return vals.map(v => {
@@ -1576,6 +1588,15 @@ document.addEventListener('click', e => {
       renderApps();
     }
   }
+  else if (a === 'clearSearch') {
+    const inp = document.getElementById(t.dataset.target);
+    if (inp) { inp.value = ''; inp.focus(); }
+    t.classList.remove('visible');
+    const fn = t.dataset.render;
+    if (fn === 'renderApps') renderApps();
+    else if (fn === 'renderInterviews') renderInterviews();
+    else if (fn === 'renderRecruiters') renderRecruiters();
+  }
   else if (a === 'exportApps') exportApps();
   else if (a === 'exportInts') exportInts();
   else if (a === 'exportRecs') exportRecs();
@@ -1608,9 +1629,9 @@ document.addEventListener('change', e => {
 });
 document.addEventListener('input', e => {
   const t = e.target;
-  if (t.dataset.oninput === 'renderApps') renderApps();
-  else if (t.dataset.oninput === 'renderInterviews') renderInterviews();
-  else if (t.dataset.oninput === 'renderRecruiters') renderRecruiters();
+  if (t.dataset.oninput === 'renderApps') renderApps(); toggleClearBtn('app-search');
+  else if (t.dataset.oninput === 'renderInterviews') renderInterviews(); toggleClearBtn('int-search');
+  else if (t.dataset.oninput === 'renderRecruiters') renderRecruiters(); toggleClearBtn('rec-search');
 });
 
 function saveModal() {
