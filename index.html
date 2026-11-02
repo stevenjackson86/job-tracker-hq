@@ -1629,9 +1629,9 @@ document.addEventListener('change', e => {
 });
 document.addEventListener('input', e => {
   const t = e.target;
-  if (t.dataset.oninput === 'renderApps') renderApps(); toggleClearBtn('app-search');
-  else if (t.dataset.oninput === 'renderInterviews') renderInterviews(); toggleClearBtn('int-search');
-  else if (t.dataset.oninput === 'renderRecruiters') renderRecruiters(); toggleClearBtn('rec-search');
+  if (t.dataset.oninput === 'renderApps') { renderApps(); toggleClearBtn('app-search'); }
+  else if (t.dataset.oninput === 'renderInterviews') { renderInterviews(); toggleClearBtn('int-search'); }
+  else if (t.dataset.oninput === 'renderRecruiters') { renderRecruiters(); toggleClearBtn('rec-search'); }
 });
 
 function saveModal() {
