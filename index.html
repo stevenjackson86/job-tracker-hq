@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- v2 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1353,7 +1353,8 @@ function renderAll() {
   const offer = apps.filter(a=>a.status==='offer').length;
   const reject = apps.filter(a=>a.status==='rejected'||a.status==='offer_rejected').length;
   const hold = apps.filter(a=>a.status==='hold').length;
-  const responded = screen+inter+offer+reject;
+  // responded = any app that got a reply, each counted once regardless of current stage
+  const responded = apps.filter(a=>['screening','interview','offer','offer_rejected','rejected'].includes(a.status)).length;
   const rate = submitted > 0 ? Math.round((responded/submitted)*100) : 0;
 
   document.getElementById('s-total').textContent = submitted;
