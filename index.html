@@ -313,6 +313,7 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
             <th class="sortable" data-action="sortApps" data-col="src">Source</th>
             <th class="sortable" data-action="sortApps" data-col="date">Date</th>
             <th class="sortable" data-action="sortApps" data-col="empType">Type</th>
+            <th class="sortable" data-action="sortApps" data-col="location">Location</th>
             <th class="sortable" data-action="sortApps" data-col="status">Status</th>
             <th></th>
           </tr></thead>
@@ -1450,7 +1451,7 @@ function renderApps() {
 
   const tb = document.getElementById('app-table');
   if (!apps.length) {
-    tb.innerHTML = '<tr><td colspan="6"><div class="empty">No applications match.</div></td></tr>';
+    tb.innerHTML = '<tr><td colspan="7"><div class="empty">No applications match.</div></td></tr>';
     return;
   }
   tb.innerHTML = apps.map(a=>`<tr class="clickable" data-action="openAppEdit" data-id="${a.id}">
@@ -1459,6 +1460,7 @@ function renderApps() {
     <td><span class="tag">${esc(a.src||'')}</span></td>
     <td style="color:var(--tx3);white-space:nowrap">${fmtD(a.date)}</td>
     <td><span class="tag" style="background:${a.empType==='contract'?'rgba(236,72,153,.12)':'rgba(59,130,246,.12)'};color:${a.empType==='contract'?'#ec4899':'#3b82f6'}">${a.empType==='contract'?'Contract':'Direct/FTE'}</span></td>
+    <td style="color:var(--tx3);font-size:12px">${a.location==='remote'?'🌐 Remote':a.location==='hybrid'?'🔀 Hybrid':a.location==='onsite'?'🏢 On-site':'—'}</td>
     <td>${statusPill(a.status)}</td>
     <td><button class="del" data-action="delApp" data-id="${a.id}">✕</button></td>
   </tr>`).join('');
