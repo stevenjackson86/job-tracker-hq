@@ -384,7 +384,7 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
             <div class="ff"><label>Status</label>
               <select id="r-status">
                 <option value="new">New Lead</option><option value="responded">Responded</option>
-                <option value="call-scheduled">Call Scheduled</option><option value="pursuing">Pursuing</option><option value="passed">Passed</option>
+                <option value="call-scheduled">Call Scheduled</option><option value="pursuing">Pursuing</option><option value="ghosted">Ghosted</option><option value="passed">Passed</option>
               </select>
             </div>
           </div>
@@ -1234,11 +1234,12 @@ function cycleRecStatus(id) {
   const curIdx = RECRUITER_STATUS_ORDER.indexOf(r.status);
   const next = RECRUITER_STATUS_ORDER[(curIdx + 1) % RECRUITER_STATUS_ORDER.length];
   r.status = next;
+  if (next === 'ghosted' && !r.ghostedAt) r.ghostedAt = Date.now();
   saveRecord('recruiters', r);
   const pill = document.querySelector(`[data-action="cycleRecStatus"][data-id="${id}"]`);
   if (pill) {
-    const statusMap = {new:'applied',responded:'screening','call-scheduled':'interview',pursuing:'interview',passed:'rejected'};
-    const labelMap = {new:'New Lead',responded:'Responded','call-scheduled':'Call Sched.',pursuing:'Pursuing',passed:'Passed'};
+    const statusMap = {new:'applied',responded:'screening','call-scheduled':'interview',pursuing:'interview',ghosted:'rejected',passed:'rejected'};
+    const labelMap = {new:'New Lead',responded:'Responded','call-scheduled':'Call Sched.',pursuing:'Pursuing',ghosted:'Ghosted',passed:'Passed'};
     pill.className = 'pill p-' + (statusMap[next] || 'applied');
     pill.textContent = (labelMap[next] || next) + ' ⟳';
   }
@@ -1689,6 +1690,16 @@ function saveModal() {
     arr[idx][f.key] = finalVal;
     if (old !== finalVal) changes.push(f.key + ':' + String(finalVal).slice(0,10));
   });
+  // Auto-stamp rejectedAt when app status flips to rejected (don't overwrite existing timestamps)
+  if (coll === 'apps' && arr[idx].status === 'rejected' && !arr[idx].rejectedAt) {
+    arr[idx].rejectedAt = Date.now();
+    changes.push('rejectedAt:auto');
+  }
+  // Auto-stamp ghostedAt when recruiter status flips to ghosted
+  if (coll === 'recruiters' && arr[idx].status === 'ghosted' && !arr[idx].ghostedAt) {
+    arr[idx].ghostedAt = Date.now();
+    changes.push('ghostedAt:auto');
+  }
   const savedColl = coll;
   const savedRec = arr[idx];
   _modalCtx = null;
@@ -1808,7 +1819,7 @@ function renderRecruiters() {
     return;
   }
   const statusMap = {new:'applied',responded:'screening','call-scheduled':'callsched',pursuing:'pursuing',passed:'rejected'};
-  const labelMap = {new:'New Lead',responded:'Responded','call-scheduled':'Call Sched.',pursuing:'Pursuing',passed:'Passed'};
+  const labelMap = {new:'New Lead',responded:'Responded','call-scheduled':'Call Sched.',pursuing:'Pursuing',ghosted:'Ghosted',passed:'Passed'};
   tb.innerHTML = recs.map(r=>`<tr class="clickable" data-action="openRecEdit" data-id="${r.id}">
     <td><strong>${esc(r.name||'—')}</strong></td>
     <td style="color:var(--tx2)">${esc(r.co||'—')}</td>
@@ -2061,6 +2072,7 @@ function renderReport() {
           // Ghosted recruiters: status still 'new' or 'responded', date > 14 days ago
           const recGhostCutoff = new Date(today); recGhostCutoff.setDate(recGhostCutoff.getDate()-14);
           const ghostedRecs = D.recruiters.filter(r => {
+            if (r.status === 'ghosted') return true;
             if (!['new','responded'].includes(r.status)) return false;
             const d = parseLocal(r.date);
             return d && d < recGhostCutoff;
