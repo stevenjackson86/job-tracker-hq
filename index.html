@@ -2078,27 +2078,27 @@ function renderReport() {
           // Since we don't have rejectedAt, show "N/A — no rejection date tracked" honestly
           const avgRejDays = null;
 
-          return \`<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px">
+          return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px">
             <div>
               <div style="font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Day of Week Applied</div>
-              \${dowRows.map(({name,count})=>\`
+              ${dowRows.map(({name,count})=>`
                 <div class="rpt-row" style="align-items:center;gap:6px">
-                  <span style="min-width:80px">\${name.slice(0,3)}</span>
+                  <span style="min-width:80px">${name.slice(0,3)}</span>
                   <div style="flex:1;background:var(--bg);border-radius:3px;height:6px;overflow:hidden">
-                    <div style="height:100%;width:\${maxDow?Math.round(count/maxDow*100):0}%;background:var(--bluel);border-radius:3px"></div>
+                    <div style="height:100%;width:${maxDow?Math.round(count/maxDow*100):0}%;background:var(--bluel);border-radius:3px"></div>
                   </div>
-                  <span class="rpt-val" style="min-width:28px;text-align:right">\${count}</span>
-                </div>\`).join('')}
+                  <span class="rpt-val" style="min-width:28px;text-align:right">${count}</span>
+                </div>`).join('')}
             </div>
             <div>
               <div style="font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Location Type</div>
-              <div class="rpt-row"><span>Remote</span><span class="rpt-val" style="color:var(--green)">\${loc.remote}</span></div>
-              <div class="rpt-row"><span>Hybrid</span><span class="rpt-val" style="color:var(--yel)">\${loc.hybrid}</span></div>
-              <div class="rpt-row"><span>On-site</span><span class="rpt-val" style="color:var(--red)">\${loc.onsite}</span></div>
-              <div class="rpt-row"><span style="color:var(--tx3)">Not specified</span><span class="rpt-val" style="color:var(--tx3)">\${loc.unknown}</span></div>
+              <div class="rpt-row"><span>Remote</span><span class="rpt-val" style="color:var(--green)">${loc.remote}</span></div>
+              <div class="rpt-row"><span>Hybrid</span><span class="rpt-val" style="color:var(--yel)">${loc.hybrid}</span></div>
+              <div class="rpt-row"><span>On-site</span><span class="rpt-val" style="color:var(--red)">${loc.onsite}</span></div>
+              <div class="rpt-row"><span style="color:var(--tx3)">Not specified</span><span class="rpt-val" style="color:var(--tx3)">${loc.unknown}</span></div>
               <div style="margin-top:10px;border-top:1px solid var(--brd);padding-top:10px">
                 <div style="font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Avg. Time to Rejection</div>
-                \${(()=>{
+                ${(()=>{
                   const pairs = allApps.filter(a => a.rejectedAt && a.date).map(a => {
                     const applied = parseLocal(a.date).getTime();
                     const rejected = a.rejectedAt;
@@ -2119,16 +2119,16 @@ function renderReport() {
             <div>
               <div style="font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Ghosted (est.)</div>
               <div style="font-size:11px;color:var(--tx3);margin-bottom:10px">Apps at "applied" with no recruiter link, 20+ days old</div>
-              <div class="rpt-row"><span>Ghosted apps</span><span class="rpt-val" style="color:var(--red)">\${ghosted}</span></div>
-              <div class="rpt-row"><span>% of total</span><span class="rpt-val" style="color:var(--tx2)">\${allApps.length?Math.round(ghosted/allApps.length*100):0}%</span></div>
+              <div class="rpt-row"><span>Ghosted apps</span><span class="rpt-val" style="color:var(--red)">${ghosted}</span></div>
+              <div class="rpt-row"><span>% of total</span><span class="rpt-val" style="color:var(--tx2)">${allApps.length?Math.round(ghosted/allApps.length*100):0}%</span></div>
               <div style="margin-top:10px;border-top:1px solid var(--brd);padding-top:10px">
                 <div style="font-size:11px;color:var(--tx3);margin-bottom:6px">Recruiters gone quiet (14+ days, status new/responded)</div>
-                <div class="rpt-row"><span>Ghosted recruiters</span><span class="rpt-val" style="color:var(--red)">\${ghostedRecs}</span></div>
+                <div class="rpt-row"><span>Ghosted recruiters</span><span class="rpt-val" style="color:var(--red)">${ghostedRecs}</span></div>
               </div>
             </div>
             <div>
               <div style="font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">This Week vs Last</div>
-              \${(()=>{
+              ${(()=>{
                 const thisWs = new Date(today); thisWs.setDate(today.getDate()-today.getDay());
                 const lastWs = new Date(thisWs); lastWs.setDate(thisWs.getDate()-7);
                 const lastWe = new Date(thisWs); lastWe.setDate(thisWs.getDate()-1);
@@ -2137,12 +2137,12 @@ function renderReport() {
                 const diff = thisWeek - lastWeek;
                 const arrow = diff>0?'&#8593;':diff<0?'&#8595;':'&#8594;';
                 const col = diff>0?'var(--green)':diff<0?'var(--red)':'var(--tx3)';
-                return \`<div class="rpt-row"><span>This week</span><span class="rpt-val">\${thisWeek}</span></div>
-                <div class="rpt-row"><span>Last week</span><span class="rpt-val">\${lastWeek}</span></div>
-                <div style="margin-top:8px;font-size:20px;font-weight:700;color:\${col};text-align:center">\${arrow} \${Math.abs(diff)} \${diff>0?'more':diff<0?'fewer':'same'}</div>\`;
+                return `<div class="rpt-row"><span>This week</span><span class="rpt-val">${thisWeek}</span></div>
+                <div class="rpt-row"><span>Last week</span><span class="rpt-val">${lastWeek}</span></div>
+                <div style="margin-top:8px;font-size:20px;font-weight:700;color:${col};text-align:center">${arrow} ${Math.abs(diff)} ${diff>0?'more':diff<0?'fewer':'same'}</div>`;
               })()}
             </div>
-          </div>\`;
+          </div>`;
         })()}
       </div>
       <div class="rpt-sec">
