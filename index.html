@@ -1319,11 +1319,11 @@ function applySortAndFilter(arr, s, searchVal, searchFields) {
       type:'empType', recruiter:'recruiterId'
     };
     // Split into field:value tokens and free-text tokens
-    const tokens = searchVal.trim().split(/\s+/);
+    const tokens = searchVal.trim().split(/\s+(?=\S)/);
     const fieldFilters = [];
     const freeTerms = [];
     tokens.forEach(tok => {
-      const m = tok.match(/^(\w+):(.+)$/);
+      const m = tok.match(/^(\w+):\s*(.+)$/);
       if (m && fieldMap[m[1].toLowerCase()]) {
         fieldFilters.push({field: fieldMap[m[1].toLowerCase()], val: m[2].toLowerCase()});
       } else {
@@ -1975,6 +1975,175 @@ function renderReport() {
             <div class="bar-cnt">${cnt}</div>
           </div>`).join(''):'<div style="color:var(--tx3);font-size:13px">No data</div>'}
         </div>
+      </div>
+      <div class="rpt-sec" style="grid-column:1/-1">
+        <h3>Application Stats</h3>
+        ${(()=>{
+          // Role level counts
+          const seniorRx = /\bsr\.?\b|\bsenior\b/i;
+          const leadRx = /\blead\b/i;
+          const managerRx = /\bmanager\b(?!\s*ial|\s*ment)/i;
+          const principalRx = /\bprincipal\b/i;
+          const staffRx = /\bstaff\b/i;
+          const directorRx = /\bdirector\b/i;
+          const senior = allApps.filter(a=>seniorRx.test(a.role||'')).length;
+          const lead   = allApps.filter(a=>leadRx.test(a.role||'')).length;
+          const manager= allApps.filter(a=>managerRx.test(a.role||'')).length;
+          const principal=allApps.filter(a=>principalRx.test(a.role||'')).length;
+          const staff  = allApps.filter(a=>staffRx.test(a.role||'')).length;
+          const director=allApps.filter(a=>directorRx.test(a.role||'')).length;
+          // Top companies by application count
+          const coCounts = allApps.reduce((acc,a)=>{const k=a.co||'?';acc[k]=(acc[k]||0)+1;return acc;},{});
+          const topCos = Object.entries(coCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+          // Top sources
+          const srcCounts = allApps.reduce((acc,a)=>{const k=a.src||'?';acc[k]=(acc[k]||0)+1;return acc;},{});
+          const topSrcs = Object.entries(srcCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+          // Contract vs Direct
+          const contract = allApps.filter(a=>a.empType==='contract').length;
+          const direct   = allApps.filter(a=>a.empType==='direct'||!a.empType).length;
+          return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+            <div>
+              <div style="font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Role Level</div>
+              <div class="rpt-row"><span>Senior / Sr.</span><span class="rpt-val">${senior}</span></div>
+              <div class="rpt-row"><span>Lead</span><span class="rpt-val">${lead}</span></div>
+              <div class="rpt-row"><span>Staff</span><span class="rpt-val">${staff}</span></div>
+              <div class="rpt-row"><span>Principal</span><span class="rpt-val">${principal}</span></div>
+              <div class="rpt-row"><span>Manager</span><span class="rpt-val">${manager}</span></div>
+              <div class="rpt-row"><span>Director</span><span class="rpt-val">${director}</span></div>
+              <div style="margin-top:10px;border-top:1px solid var(--brd);padding-top:10px">
+                <div class="rpt-row"><span>Direct / FTE</span><span class="rpt-val" style="color:var(--bluel)">${direct}</span></div>
+                <div class="rpt-row"><span>Contract</span><span class="rpt-val" style="color:var(--pur)">${contract}</span></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Most Applied To</div>
+              ${topCos.map(([co,n])=>`<div class="rpt-row"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px">${esc(co)}</span><span class="rpt-val">${n}</span></div>`).join('')}
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Top Sources</div>
+              ${topSrcs.map(([src,n])=>`<div class="rpt-row"><span>${esc(src)}</span><span class="rpt-val">${n}</span></div>`).join('')}
+            </div>
+          </div>`;
+        })()}
+      </div>
+      <div class="rpt-sec" style="grid-column:1/-1">
+        <h3>Activity Patterns</h3>
+        ${(()=>{
+          const today = new Date(); today.setHours(0,0,0,0);
+          const parseLocal = s => { if(!s) return null; const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s); return m?new Date(+m[1],+m[2]-1,+m[3]):new Date(s); };
+          const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+          // Day of week breakdown
+          const dowCounts = Array(7).fill(0);
+          allApps.forEach(a => { const d=parseLocal(a.date); if(d) dowCounts[d.getDay()]++; });
+          const maxDow = Math.max(...dowCounts);
+          const dowRows = days.map((name,i) => ({name, count:dowCounts[i]})).sort((a,b)=>b.count-a.count);
+
+          // Location breakdown — parse notes for keywords
+          const loc = {remote:0, hybrid:0, onsite:0, unknown:0};
+          allApps.forEach(a => {
+            const txt = ((a.notes||'')+(a.co||'')).toLowerCase();
+            if (/\bremote\b/.test(txt)) loc.remote++;
+            else if (/\bhybrid\b/.test(txt)) loc.hybrid++;
+            else if (/\bon.?site\b/.test(txt)) loc.onsite++;
+            else loc.unknown++;
+          });
+
+          // Ghosted apps: status=applied, no recruiterId, applied > 20 days ago
+          const ghostCutoff = new Date(today); ghostCutoff.setDate(ghostCutoff.getDate()-20);
+          const ghosted = allApps.filter(a => {
+            if (a.status !== 'applied') return false;
+            if (a.recruiterId) return false;
+            const d = parseLocal(a.date);
+            return d && d < ghostCutoff;
+          }).length;
+
+          // Ghosted recruiters: status still 'new' or 'responded', date > 14 days ago
+          const recGhostCutoff = new Date(today); recGhostCutoff.setDate(recGhostCutoff.getDate()-14);
+          const ghostedRecs = D.recruiters.filter(r => {
+            if (!['new','responded'].includes(r.status)) return false;
+            const d = parseLocal(r.date);
+            return d && d < recGhostCutoff;
+          }).length;
+
+          // Avg days applied → rejected
+          // Use created timestamp as proxy for "applied at" if available
+          const rejTimes = allApps.filter(a => a.status==='rejected' && a.created && a.date).map(a => {
+            const applied = parseLocal(a.date);
+            const created = new Date(a.created);
+            // created = when we logged it, date = when applied — use date as baseline
+            // We don't have rejectedAt, so we skip this calc honestly
+            return null;
+          }).filter(Boolean);
+          // Since we don't have rejectedAt, show "N/A — no rejection date tracked" honestly
+          const avgRejDays = null;
+
+          return \`<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px">
+            <div>
+              <div style="font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Day of Week Applied</div>
+              \${dowRows.map(({name,count})=>\`
+                <div class="rpt-row" style="align-items:center;gap:6px">
+                  <span style="min-width:80px">\${name.slice(0,3)}</span>
+                  <div style="flex:1;background:var(--bg);border-radius:3px;height:6px;overflow:hidden">
+                    <div style="height:100%;width:\${maxDow?Math.round(count/maxDow*100):0}%;background:var(--bluel);border-radius:3px"></div>
+                  </div>
+                  <span class="rpt-val" style="min-width:28px;text-align:right">\${count}</span>
+                </div>\`).join('')}
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Location Type</div>
+              <div class="rpt-row"><span>Remote</span><span class="rpt-val" style="color:var(--green)">\${loc.remote}</span></div>
+              <div class="rpt-row"><span>Hybrid</span><span class="rpt-val" style="color:var(--yel)">\${loc.hybrid}</span></div>
+              <div class="rpt-row"><span>On-site</span><span class="rpt-val" style="color:var(--red)">\${loc.onsite}</span></div>
+              <div class="rpt-row"><span style="color:var(--tx3)">Not specified</span><span class="rpt-val" style="color:var(--tx3)">\${loc.unknown}</span></div>
+              <div style="margin-top:10px;border-top:1px solid var(--brd);padding-top:10px">
+                <div style="font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Avg. Time to Rejection</div>
+                ${(()=>{
+                  const pairs = allApps.filter(a => a.rejectedAt && a.date).map(a => {
+                    const applied = parseLocal(a.date).getTime();
+                    const rejected = a.rejectedAt;
+                    const days = Math.round((rejected - applied) / 86400000);
+                    return days >= 0 ? days : null;
+                  }).filter(d => d !== null);
+                  if (!pairs.length) return '<div style="font-size:12px;color:var(--tx3)">No data yet</div>';
+                  const avg = Math.round(pairs.reduce((s,d)=>s+d,0)/pairs.length);
+                  const min = Math.min(...pairs);
+                  const max = Math.max(...pairs);
+                  return \`<div class="rpt-row"><span>Average</span><span class="rpt-val" style="color:var(--bluel)">\${avg} days</span></div>
+                    <div class="rpt-row"><span>Fastest</span><span class="rpt-val">\${min}d</span></div>
+                    <div class="rpt-row"><span>Slowest</span><span class="rpt-val">\${max}d</span></div>
+                    <div style="font-size:10px;color:var(--tx3);margin-top:6px">Based on \${pairs.length} rejections with email timestamps</div>\`;
+                })()}
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Ghosted (est.)</div>
+              <div style="font-size:11px;color:var(--tx3);margin-bottom:10px">Apps at "applied" with no recruiter link, 20+ days old</div>
+              <div class="rpt-row"><span>Ghosted apps</span><span class="rpt-val" style="color:var(--red)">\${ghosted}</span></div>
+              <div class="rpt-row"><span>% of total</span><span class="rpt-val" style="color:var(--tx2)">\${allApps.length?Math.round(ghosted/allApps.length*100):0}%</span></div>
+              <div style="margin-top:10px;border-top:1px solid var(--brd);padding-top:10px">
+                <div style="font-size:11px;color:var(--tx3);margin-bottom:6px">Recruiters gone quiet (14+ days, status new/responded)</div>
+                <div class="rpt-row"><span>Ghosted recruiters</span><span class="rpt-val" style="color:var(--red)">\${ghostedRecs}</span></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">This Week vs Last</div>
+              \${(()=>{
+                const thisWs = new Date(today); thisWs.setDate(today.getDate()-today.getDay());
+                const lastWs = new Date(thisWs); lastWs.setDate(thisWs.getDate()-7);
+                const lastWe = new Date(thisWs); lastWe.setDate(thisWs.getDate()-1);
+                const thisWeek = allApps.filter(a=>{const d=parseLocal(a.date);return d&&d>=thisWs;}).length;
+                const lastWeek = allApps.filter(a=>{const d=parseLocal(a.date);return d&&d>=lastWs&&d<=lastWe;}).length;
+                const diff = thisWeek - lastWeek;
+                const arrow = diff>0?'&#8593;':diff<0?'&#8595;':'&#8594;';
+                const col = diff>0?'var(--green)':diff<0?'var(--red)':'var(--tx3)';
+                return \`<div class="rpt-row"><span>This week</span><span class="rpt-val">\${thisWeek}</span></div>
+                <div class="rpt-row"><span>Last week</span><span class="rpt-val">\${lastWeek}</span></div>
+                <div style="margin-top:8px;font-size:20px;font-weight:700;color:\${col};text-align:center">\${arrow} \${Math.abs(diff)} \${diff>0?'more':diff<0?'fewer':'same'}</div>\`;
+              })()}
+            </div>
+          </div>\`;
+        })()}
       </div>
       <div class="rpt-sec">
         <h3>Upcoming Interviews</h3>
