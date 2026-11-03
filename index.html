@@ -290,6 +290,10 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
             <div class="ff"><label>Recruiter (optional)</label><select id="f-recruiter"><option value="">None</option></select></div>
             <div class="ff"><label>Emp. Type</label><select id="f-emptype"><option value="direct">Direct/FTE</option><option value="contract">Contract</option></select></div>
           </div>
+          <div class="fr">
+            <div class="ff"><label>Location Type</label><select id="f-location"><option value="">Unknown</option><option value="remote">Remote</option><option value="hybrid">Hybrid</option><option value="onsite">On-site</option></select></div>
+            <div class="ff"></div>
+          </div>
           <div class="ff"><label>Notes</label><textarea id="f-notes" placeholder="Comp, referral contact, notes…"></textarea></div>
           <div class="form-acts">
             <button class="btn-p" data-action="addApp">Save</button>
@@ -1154,12 +1158,14 @@ async function addApp() {
     src: document.getElementById('f-src').value,
     link: document.getElementById('f-link').value.trim(),
     notes: document.getElementById('f-notes').value.trim(),
+    location: document.getElementById('f-location').value || '',
     recruiterId: recruiterId || null,
     created: Date.now()
   };
   D.apps.unshift(rec);
   await saveRecord('apps', rec);
   ['f-co','f-role','f-link','f-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-location').value = '';
   document.getElementById('f-recruiter').value = '';
   toggleForm('appForm');
   renderAll();
@@ -1227,7 +1233,7 @@ async function updateRecStatus(id, val) {
   toast('Saved ✓');
 }
 
-const RECRUITER_STATUS_ORDER = ['new','responded','call-scheduled','pursuing','passed'];
+const RECRUITER_STATUS_ORDER = ['new','responded','call-scheduled','pursuing','ghosted','passed'];
 function cycleRecStatus(id) {
   const r = D.recruiters.find(x => x.id === id);
   if (!r) return;
@@ -1317,7 +1323,7 @@ function applySortAndFilter(arr, s, searchVal, searchFields) {
     const fieldMap = {
       co:'co', company:'co', role:'role', status:'status', src:'src', source:'src',
       notes:'notes', name:'name', channel:'channel', date:'date', emptype:'empType',
-      type:'empType', recruiter:'recruiterId'
+      type:'empType', recruiter:'recruiterId', location:'location', loc:'location'
     };
     // Split into field:value tokens and free-text tokens
     const tokens = searchVal.trim().split(/\s+(?=\S)/);
@@ -1734,6 +1740,9 @@ function openAppEdit(id) {
     {key:'empType',     label:'Employment Type',  type:'select',  value:a.empType||'direct', options:[
       {v:'direct',l:'Direct/FTE'},{v:'contract',l:'Contract'}
     ]},
+    {key:'location',    label:'Location Type',    type:'select',  value:a.location||'', options:[
+      {v:'',l:'Unknown'},{v:'remote',l:'Remote'},{v:'hybrid',l:'Hybrid'},{v:'onsite',l:'On-site'}
+    ]},
     {key:'status',      label:'Status',           type:'select',  value:a.status, options:[
       {v:'applied',l:'Applied'},{v:'screening',l:'Screening'},{v:'interview',l:'Interview'},
       {v:'offer',l:'Offer'},{v:'offer_rejected',l:'Offer Rejected'},{v:'rejected',l:'Rejected'},
@@ -1759,7 +1768,7 @@ function openRecEdit(id) {
     {key:'roles',   label:'Role(s)',        type:'text',    value:r.roles},
     {key:'status',  label:'Status',         type:'select',  value:r.status, options:[
       {v:'new',l:'New Lead'},{v:'responded',l:'Responded'},
-      {v:'call-scheduled',l:'Call Scheduled'},{v:'pursuing',l:'Pursuing'},{v:'passed',l:'Passed'}
+      {v:'call-scheduled',l:'Call Scheduled'},{v:'pursuing',l:'Pursuing'},{v:'ghosted',l:'Ghosted'},{v:'passed',l:'Passed'}
     ]},
     {key:'notes',   label:'Notes',          type:'textarea',value:r.notes},
   ], 'recruiters', id);
@@ -2050,14 +2059,21 @@ function renderReport() {
           const maxDow = Math.max(...dowCounts);
           const dowRows = days.map((name,i) => ({name, count:dowCounts[i]})).sort((a,b)=>b.count-a.count);
 
-          // Location breakdown — parse notes for keywords
+          // Location breakdown — use location field if set, fall back to notes parsing
           const loc = {remote:0, hybrid:0, onsite:0, unknown:0};
           allApps.forEach(a => {
-            const txt = ((a.notes||'')+(a.co||'')).toLowerCase();
-            if (/\bremote\b/.test(txt)) loc.remote++;
-            else if (/\bhybrid\b/.test(txt)) loc.hybrid++;
-            else if (/\bon.?site\b/.test(txt)) loc.onsite++;
-            else loc.unknown++;
+            if (a.location) {
+              if (a.location === 'remote') loc.remote++;
+              else if (a.location === 'hybrid') loc.hybrid++;
+              else if (a.location === 'onsite') loc.onsite++;
+              else loc.unknown++;
+            } else {
+              const txt = ((a.notes||'')+(a.co||'')).toLowerCase();
+              if (/\bremote\b/.test(txt)) loc.remote++;
+              else if (/\bhybrid\b/.test(txt)) loc.hybrid++;
+              else if (/\bon.?site\b/.test(txt)) loc.onsite++;
+              else loc.unknown++;
+            }
           });
 
           // Ghosted apps: status=applied, no recruiterId, applied > 20 days ago
