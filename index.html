@@ -1473,7 +1473,17 @@ function closeModal() {
   if (el) el.style.display = 'none';
   _modalCtx = null;
 }
-document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  const focused = document.activeElement;
+  if (focused && focused.classList.contains('search-input') && focused.value) {
+    focused.value = '';
+    focused.dispatchEvent(new Event('input'));
+    focused.blur();
+  } else {
+    closeModal();
+  }
+});
 
 function openEditModal(title, fields, coll, id) {
   _modalCtx = {coll, id, fields};
