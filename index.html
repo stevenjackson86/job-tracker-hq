@@ -1917,7 +1917,7 @@ function renderReport() {
 
   // Rejections = total rejected apps (status=rejected), always all-time
   // Can't reliably know *when* a rejection arrived without a rejectedDate field
-  const reject = allApps.filter(a=>a.status==='rejected'||a.status==='offer_rejected').length;
+  const reject = allApps.filter(a=>a.status==='rejected'||a.status==='offer_rejected'||a.status==='ghosted').length;
 
   // Response rate = (screening + interview + offer) / total applied (all time)
   // Excludes rejected since they don't represent positive responses
@@ -1931,7 +1931,7 @@ function renderReport() {
   const weeklyData = buckets.map(b => ({
     label: b.label,
     applied: allApps.filter(a => { const d=parseLocal(a.date); return d>=b.start && d<=b.end; }).length,
-    rejected: allApps.filter(a => { const d=parseLocal(a.date); return d>=b.start && d<=b.end && (a.status==='rejected'||a.status==='offer_rejected'); }).length,
+    rejected: allApps.filter(a => { const d=parseLocal(a.date); return d>=b.start && d<=b.end && (a.status==='rejected'||a.status==='offer_rejected'||a.status==='ghosted'); }).length,
   }));
 
   const pipeline = [
@@ -1939,7 +1939,7 @@ function renderReport() {
     {lbl:'Screening',cnt:allApps.filter(a=>a.status==='screening').length,col:'var(--yel)'},
     {lbl:'Interview',cnt:allInter,col:'var(--pur)'},
     {lbl:'Current Offers',cnt:allOfferCurrent,col:'var(--green)'},
-    {lbl:'Rejected',cnt:allApps.filter(a=>a.status==='rejected'||a.status==='offer_rejected').length,col:'var(--red)'},
+    {lbl:'Rejected / Ghosted',cnt:allApps.filter(a=>a.status==='rejected'||a.status==='offer_rejected'||a.status==='ghosted').length,col:'var(--red)'},
     {lbl:'On Hold',cnt:allApps.filter(a=>a.status==='hold').length,col:'var(--yel)'},
   ];
 
@@ -1962,15 +1962,16 @@ function renderReport() {
         <div class="rpt-row"><span style="padding-left:12px;font-size:12px;color:var(--tx3)">— interview events logged</span><span class="rpt-val" style="font-size:13px;color:var(--tx3)">${allInterEvents}</span></div>
         <div class="rpt-row"><span>Total Offers Received</span><span class="rpt-val" style="color:var(--green)">${allOffer}</span></div>
         <div class="rpt-row"><span style="padding-left:12px;font-size:12px;color:var(--tx3)">— currently active</span><span class="rpt-val" style="font-size:13px;color:var(--tx3)">${allOfferCurrent}</span></div>
-        <div class="rpt-row"><span>Rejected</span><span class="rpt-val" style="color:var(--red)">${reject}</span></div>
+        <div class="rpt-row"><span>Rejected / Ghosted</span><span class="rpt-val" style="color:var(--red)">${reject}</span></div>
         <div class="rpt-row"><span style="padding-left:12px;font-size:12px;color:var(--tx3)">— offers rejected</span><span class="rpt-val" style="font-size:13px;color:var(--tx3)">${allApps.filter(a=>a.status==='offer_rejected').length}</span></div>
+        <div class="rpt-row"><span style="padding-left:12px;font-size:12px;color:var(--tx3)">— ghosted</span><span class="rpt-val" style="font-size:13px;color:var(--tx3)">${allApps.filter(a=>a.status==='ghosted').length}</span></div>
         <div class="rpt-row"><span>On hold</span><span class="rpt-val" style="color:var(--yel)">${hold}</span></div>
         <div class="rpt-row" style="border-top:1px solid var(--brd);margin-top:6px;padding-top:8px"><span>Total tracked</span><span class="rpt-val" style="color:var(--tx3)">${allTotal}</span></div>
         ${(()=>{
           const submitted = allApps.length; // every application ever sent, regardless of current status
           const posResponded = allApps.filter(a=>['screening','interview','offer','offer_rejected'].includes(a.status)||!!a.recruiterId).length;
           const posRate = submitted>0 ? Math.round(posResponded/submitted*100) : 0;
-          const rejRate = submitted>0 ? Math.round((reject)/submitted*100) : 0;
+          const rejRate = submitted>0 ? Math.round(reject/submitted*100) : 0;
           const responseRate = submitted>0 ? Math.round(allApps.filter(a=>(a.status!=='applied'&&a.status!=='ghosted')||!!a.recruiterId).length/submitted*100) : 0;
           return `<div style="margin-top:14px;display:flex;gap:6px;justify-content:space-between">
             <div style="text-align:center;flex:1">
@@ -1981,7 +1982,7 @@ function renderReport() {
             <div style="text-align:center;flex:1">
               <div class="rate-big" style="color:var(--red)">${rejRate}%</div>
               <div style="font-size:11px;color:var(--tx3);margin-top:2px">Rejection</div>
-              <div style="font-size:10px;color:var(--tx3)">rejected only</div>
+              <div style="font-size:10px;color:var(--tx3)">rejected + ghosted</div>
             </div>
             <div style="text-align:center;flex:1">
               <div class="rate-big" style="color:var(--bluel)">${responseRate}%</div>
