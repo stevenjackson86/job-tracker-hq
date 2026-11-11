@@ -75,6 +75,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .p-offer_rejected{background:var(--redm);color:var(--red)}.p-offer_rejected::before{background:var(--red)}
 .p-rejected{background:var(--redm);color:var(--red)}.p-rejected::before{background:var(--red)}
 .p-ghosted{background:rgba(100,116,139,.15);color:var(--slate2)}.p-ghosted::before{background:var(--slate2)}
+.p-passed{background:var(--redm);color:var(--red)}.p-passed::before{background:var(--red)}
 .p-hold{background:rgba(245,158,11,.1);color:#d97706}.p-hold::before{background:#d97706}
 .p-pursuing{background:rgba(236,72,153,.12);color:#ec4899}.p-pursuing::before{background:#ec4899}
 .p-callsched{background:rgba(20,184,166,.12);color:#14b8a6}.p-callsched::before{background:#14b8a6}
@@ -302,7 +303,7 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
         </div>
         <div class="search-wrap">
           <div class="search-wrap-inner">
-            <input class="search-input" id="app-search" placeholder="Search… or co:Microsoft role:Senior status:rejected" data-oninput="renderApps">
+            <input class="search-input" id="app-search" placeholder="Search… co:Microsoft status:screening,interview status:!rejected loc:remote" data-oninput="renderApps">
             <button class="search-clear" id="app-search-clear" data-action="clearSearch" data-target="app-search" data-render="renderApps">✕</button>
           </div>
         </div>
@@ -401,7 +402,7 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
         </div>
         <div class="search-wrap">
           <div class="search-wrap-inner">
-            <input class="search-input" id="rec-search" placeholder="Search… or name:Macy status:pursuing" data-oninput="renderRecruiters">
+            <input class="search-input" id="rec-search" placeholder="Search… name:Macy status:!ghosted,!passed status:pursuing,call-scheduled" data-oninput="renderRecruiters">
             <button class="search-clear" id="rec-search-clear" data-action="clearSearch" data-target="rec-search" data-render="renderRecruiters">✕</button>
           </div>
         </div>
@@ -1318,7 +1319,10 @@ function updateSortHeaders(tableId, activeCol, dir, cols) {
 
 function applySortAndFilter(arr, s, searchVal, searchFields) {
   // Search — supports field:value syntax e.g. "co:microsoft" or "role:senior"
-  // Multiple terms can be combined: "co:microsoft role:senior"
+  // Comma-separated OR values: "status:screening,interview"
+  // Exclusions with !: "status:!ghosted,!passed" or "status:!rejected"
+  // Mix include+exclude: "status:screening,!ghosted" (include screening, exclude ghosted)
+  // Multiple terms ANDed: "co:microsoft status:!rejected"
   let out = arr;
   if (searchVal) {
     const fieldMap = {
@@ -1326,22 +1330,30 @@ function applySortAndFilter(arr, s, searchVal, searchFields) {
       notes:'notes', name:'name', channel:'channel', date:'date', emptype:'empType',
       type:'empType', recruiter:'recruiterId', location:'location', loc:'location'
     };
-    // Split into field:value tokens and free-text tokens
     const tokens = searchVal.trim().split(/\s+(?=\S)/);
     const fieldFilters = [];
     const freeTerms = [];
     tokens.forEach(tok => {
       const m = tok.match(/^(\w+):\s*(.+)$/);
       if (m && fieldMap[m[1].toLowerCase()]) {
-        fieldFilters.push({field: fieldMap[m[1].toLowerCase()], val: m[2].toLowerCase()});
+        const field = fieldMap[m[1].toLowerCase()];
+        const parts = m[2].toLowerCase().split(',').map(p => p.trim()).filter(Boolean);
+        const include = parts.filter(p => !p.startsWith('!')).map(p => p);
+        const exclude = parts.filter(p => p.startsWith('!')).map(p => p.slice(1));
+        fieldFilters.push({field, include, exclude});
       } else {
         freeTerms.push(tok.toLowerCase());
       }
     });
     out = arr.filter(r => {
-      // All field filters must match
-      const fieldOk = fieldFilters.every(({field,val}) => (r[field]||'').toLowerCase().includes(val));
-      // All free terms must match at least one search field
+      const fieldOk = fieldFilters.every(({field, include, exclude}) => {
+        const v = (r[field]||'').toLowerCase();
+        // Exclusions: none of the exclude values may match
+        if (exclude.length && exclude.some(x => v.includes(x))) return false;
+        // Inclusions: at least one include value must match (if any specified)
+        if (include.length && !include.some(x => v.includes(x))) return false;
+        return true;
+      });
       const freeOk = freeTerms.every(term => searchFields.some(f => (r[f]||'').toLowerCase().includes(term)));
       return fieldOk && freeOk;
     });
@@ -1839,7 +1851,7 @@ function renderRecruiters() {
     tb.innerHTML = '<tr><td colspan="7"><div class="empty">No recruiter leads match.</div></td></tr>';
     return;
   }
-  const statusMap = {new:'applied',responded:'screening','call-scheduled':'callsched',pursuing:'pursuing',passed:'rejected'};
+  const statusMap = {new:'applied',responded:'screening','call-scheduled':'callsched',pursuing:'pursuing',ghosted:'ghosted',passed:'rejected'};
   const labelMap = {new:'New Lead',responded:'Responded','call-scheduled':'Call Sched.',pursuing:'Pursuing',ghosted:'Ghosted',passed:'Passed'};
   tb.innerHTML = recs.map(r=>`<tr class="clickable" data-action="openRecEdit" data-id="${r.id}">
     <td><strong>${esc(r.name||'—')}</strong></td>
