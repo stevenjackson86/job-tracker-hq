@@ -157,6 +157,9 @@ tr.clickable{cursor:pointer}
 tr.clickable:hover td{background:rgba(37,99,235,.06)}
 .m-field{display:flex;flex-direction:column;gap:4px}
 .m-field label{font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px}
+.m-copy-btn{background:none;border:none;cursor:pointer;color:var(--tx3);font-size:13px;padding:0 2px;line-height:1;border-radius:3px;transition:color .12s,background .12s;user-select:none}
+.m-copy-btn:hover{color:var(--tx);background:var(--brd)}
+.m-copy-btn.copied{color:var(--green)}
 .m-field input,.m-field select,.m-field textarea{background:var(--bg);border:1px solid var(--brd2);color:var(--tx);border-radius:6px;padding:7px 10px;font-size:13px;font-family:inherit;outline:none;transition:border-color .12s;width:100%}
 .m-field input:focus,.m-field select:focus,.m-field textarea:focus{border-color:var(--blue)}
 .m-field select option{background:var(--surf2)}
@@ -1501,18 +1504,21 @@ function openEditModal(title, fields, coll, id) {
   _modalCtx = {coll, id, fields};
   document.getElementById('m-title').textContent = title;
   // Build fields, then set values via JS to avoid HTML-encoding issues
+  const copyable = t => !['select','button-group'].includes(t);
   document.getElementById('m-fields').innerHTML = fields.map(f => {
     let input;
+    const canCopy = copyable(f.type);
+    const copyBtn = canCopy
+      ? `<button type="button" class="m-copy-btn" data-copy-key="${esc(f.key)}" title="Copy">⎘</button>`
+      : '';
     if (f.type === 'readonly') {
       input = `<div style="padding:7px 10px;color:var(--tx2);font-size:13px;background:var(--bg);border:1px solid var(--brd);border-radius:6px">${esc(f.value||'—')}</div>`;
     } else if (f.type === 'select') {
       if (f.options.length > 6) {
-        // Native <select> for long lists (recruiter/app pickers) — button groups are unusable at scale
         input = `<select class="m-native-sel" id="mf-${f.key}" data-field-key="${f.key}">${f.options.map(o=>
           `<option value="${esc(o.v)}"${o.v===f.value?' selected':''}>${esc(o.l)}</option>`
         ).join('')}</select>`;
       } else {
-        // Button group for short option sets (status, empType, channel)
         input = `<div class="m-btn-group" id="mf-${f.key}" data-field-key="${f.key}">${f.options.map(o=>
           `<button type="button" class="m-btn-opt${o.v===f.value?' active':''}" data-val="${esc(o.v)}">${esc(o.l)}</button>`
         ).join('')}</div>`;
@@ -1522,7 +1528,7 @@ function openEditModal(title, fields, coll, id) {
     } else {
       input = `<input id="mf-${f.key}" type="${f.type||'text'}">`;
     }
-    return `<div class="m-field"><label>${esc(f.label)}</label>${input}</div>`;
+    return `<div class="m-field"><label style="display:flex;align-items:center;justify-content:space-between">${esc(f.label)}${copyBtn}</label>${input}</div>`;
   }).join('');
   // Set values safely via JS after DOM insertion, and capture live changes directly into f.value
   fields.forEach(f => {
@@ -1537,6 +1543,36 @@ function openEditModal(title, fields, coll, id) {
     el.value = f.value || '';
     el.addEventListener('change', () => { f.value = el.value; });
     el.addEventListener('input', () => { f.value = el.value; });
+  });
+  // Copy button handlers
+  document.querySelectorAll('.m-copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.copyKey;
+      const field = fields.find(f => f.key === key);
+      if (!field) return;
+      let val = '';
+      if (field.type === 'readonly') {
+        val = field.value || '';
+      } else {
+        const el = document.getElementById('mf-' + key);
+        val = el ? el.value : (field.value || '');
+      }
+      if (!val || val === '—') return;
+      navigator.clipboard.writeText(val).then(() => {
+        btn.textContent = '✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = '⎘'; btn.classList.remove('copied'); }, 1500);
+      }).catch(() => {
+        // Fallback for older browsers
+        const ta = document.createElement('textarea');
+        ta.value = val; ta.style.position='fixed'; ta.style.opacity='0';
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = '✓'; btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = '⎘'; btn.classList.remove('copied'); }, 1500);
+      });
+    });
   });
   document.getElementById('modalOverlay').style.display = 'flex';
 }
