@@ -176,7 +176,7 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
 <header class="hdr">
   <div style="display:flex;align-items:center;gap:10px">
     <button class="hamburger" data-action="toggleMobileNav">☰</button>
-    <div class="logo">Job<span>HQ</span></div>
+    <div class="logo" style="cursor:pointer" data-action="nav-dash">Job<span>HQ</span></div>
     <span style="font-size:11px;color:var(--tx3)">Steven Jackson</span>
   </div>
   <div class="hdr-r">
@@ -226,7 +226,7 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
         <div class="stat s-pur" style="cursor:pointer" data-action="statNav" data-target="interviews" data-filter=""><div class="stat-val" id="s-inter">0</div><div class="stat-lbl">Interviewing</div></div>
         <div class="stat s-green" style="cursor:pointer" data-action="statNav" data-target="apps" data-filter="offer"><div class="stat-val" id="s-offer">0</div><div class="stat-lbl">Active Offers</div></div>
         <div class="stat s-red" style="cursor:pointer" data-action="statNav" data-target="apps" data-filter="rejected"><div class="stat-val" id="s-reject">0</div><div class="stat-lbl">Rejected</div></div>
-        <div class="stat"><div class="stat-val" id="s-rate" style="color:var(--tx)">0%</div><div class="stat-lbl">Response Rate</div></div>
+        <div class="stat" style="cursor:pointer" data-action="nav-report"><div class="stat-val" id="s-rate" style="color:var(--tx)">0%</div><div class="stat-lbl">Response Rate</div></div>
       </div>
       <div class="sec">
         <div class="sec-hd"><div class="sec-title">Recent Activity</div><button class="sec-act" data-action="nav-apps">View all →</button></div>
@@ -441,9 +441,10 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
     <button class="modal-close" data-action="closeModal">✕</button>
     <h2 id="m-title" style="margin-bottom:16px"></h2>
     <div id="m-fields" style="display:flex;flex-direction:column;gap:11px"></div>
-    <div style="display:flex;gap:8px;margin-top:18px">
+    <div style="display:flex;gap:8px;margin-top:18px;align-items:center">
       <button class="btn-p" id="modal-save-btn" data-action="modal-save-btn">Save</button>
       <button class="btn-c" id="modal-cancel-btn" data-action="modal-cancel-btn">Cancel</button>
+      <button class="btn-c" id="modal-copyjson-btn" style="margin-left:auto;font-size:12px" data-action="modal-copyjson-btn">Copy JSON</button>
     </div>
   </div>
 </div>
@@ -1699,6 +1700,26 @@ document.addEventListener('click', e => {
   else if (a === 'modalOverlay') { if (e.target === t) closeModal(); }
   else if (a === 'closeModal') closeModal();
   else if (a === 'modal-save-btn' || t.id === 'modal-save-btn') saveModal();
+  else if (a === 'modal-copyjson-btn') {
+    if (!_modalCtx) return;
+    const {coll, idx} = _modalCtx;
+    const arr = D[coll];
+    const rec = arr[idx];
+    if (!rec) return;
+    const btn = document.getElementById('modal-copyjson-btn');
+    navigator.clipboard.writeText(JSON.stringify(rec, null, 2)).then(() => {
+      btn.textContent = '✓ Copied'; btn.style.color = 'var(--green)';
+      setTimeout(() => { btn.textContent = 'Copy JSON'; btn.style.color = ''; }, 1800);
+    }).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = JSON.stringify(rec, null, 2); ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+      document.body.removeChild(ta);
+      btn.textContent = '✓ Copied'; btn.style.color = 'var(--green)';
+      setTimeout(() => { btn.textContent = 'Copy JSON'; btn.style.color = ''; }, 1800);
+    });
+  }
+  else if (a === 'nav-report') nav('report');
   else if (a === 'modal-cancel-btn' || t.id === 'modal-cancel-btn') closeModal();
   else if (a === 'openAppEdit') { e.stopPropagation(); openAppEdit(t.dataset.id); }
   else if (a === 'openIntEdit') { e.stopPropagation(); openModal(D.interviews.find(x=>x.id===t.dataset.id)); }
