@@ -1489,6 +1489,28 @@ function closeModal() {
   if (el) el.style.display = 'none';
   _modalCtx = null;
 }
+document.getElementById('modal-copyjson-btn').addEventListener('click', e => {
+  e.stopPropagation();
+  if (!_modalCtx) { console.log('copyjson: no _modalCtx'); return; }
+  const {coll, id} = _modalCtx;
+  const rec = D[coll] && D[coll].find(r => r.id === id);
+  if (!rec) { console.log('copyjson: no rec found', coll, id); return; }
+  const btn = document.getElementById('modal-copyjson-btn');
+  const json = JSON.stringify(rec, null, 2);
+  navigator.clipboard.writeText(json).then(() => {
+    btn.textContent = '✓ Copied'; btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = 'Copy JSON'; btn.style.color = ''; }, 1800);
+  }).catch(err => {
+    console.log('clipboard API failed, trying execCommand', err);
+    const ta = document.createElement('textarea');
+    ta.value = json; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '✓ Copied'; btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = 'Copy JSON'; btn.style.color = ''; }, 1800);
+  });
+});
+
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
   const focused = document.activeElement;
@@ -1700,25 +1722,7 @@ document.addEventListener('click', e => {
   else if (a === 'modalOverlay') { if (e.target === t) closeModal(); }
   else if (a === 'closeModal') closeModal();
   else if (a === 'modal-save-btn' || t.id === 'modal-save-btn') saveModal();
-  else if (t.id === 'modal-copyjson-btn') {
-    if (!_modalCtx) return;
-    const {coll, id} = _modalCtx;
-    const rec = D[coll].find(r => r.id === id);
-    if (!rec) return;
-    const btn = document.getElementById('modal-copyjson-btn');
-    const json = JSON.stringify(rec, null, 2);
-    navigator.clipboard.writeText(json).then(() => {
-      btn.textContent = '✓ Copied'; btn.style.color = 'var(--green)';
-      setTimeout(() => { btn.textContent = 'Copy JSON'; btn.style.color = ''; }, 1800);
-    }).catch(() => {
-      const ta = document.createElement('textarea');
-      ta.value = json; ta.style.position='fixed'; ta.style.opacity='0';
-      document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-      document.body.removeChild(ta);
-      btn.textContent = '✓ Copied'; btn.style.color = 'var(--green)';
-      setTimeout(() => { btn.textContent = 'Copy JSON'; btn.style.color = ''; }, 1800);
-    });
-  }
+
   else if (a === 'nav-report') nav('report');
   else if (a === 'modal-cancel-btn' || t.id === 'modal-cancel-btn') closeModal();
   else if (a === 'openAppEdit') { e.stopPropagation(); openAppEdit(t.dataset.id); }
