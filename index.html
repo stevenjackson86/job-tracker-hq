@@ -1702,9 +1702,8 @@ document.addEventListener('click', e => {
   else if (a === 'modal-save-btn' || t.id === 'modal-save-btn') saveModal();
   else if (a === 'modal-copyjson-btn') {
     if (!_modalCtx) return;
-    const {coll, idx} = _modalCtx;
-    const arr = D[coll];
-    const rec = arr[idx];
+    const {coll, id} = _modalCtx;
+    const rec = D[coll].find(r => r.id === id);
     if (!rec) return;
     const btn = document.getElementById('modal-copyjson-btn');
     navigator.clipboard.writeText(JSON.stringify(rec, null, 2)).then(() => {
