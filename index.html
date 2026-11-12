@@ -444,7 +444,7 @@ tr.clickable:hover td{background:rgba(37,99,235,.06)}
     <div style="display:flex;gap:8px;margin-top:18px;align-items:center">
       <button class="btn-p" id="modal-save-btn" data-action="modal-save-btn">Save</button>
       <button class="btn-c" id="modal-cancel-btn" data-action="modal-cancel-btn">Cancel</button>
-      <button class="btn-c" id="modal-copyjson-btn" style="margin-left:auto;font-size:12px" data-action="modal-copyjson-btn">Copy JSON</button>
+      <button class="btn-c" id="modal-copyjson-btn" style="margin-left:auto;font-size:12px">Copy JSON</button>
     </div>
   </div>
 </div>
@@ -1700,18 +1700,19 @@ document.addEventListener('click', e => {
   else if (a === 'modalOverlay') { if (e.target === t) closeModal(); }
   else if (a === 'closeModal') closeModal();
   else if (a === 'modal-save-btn' || t.id === 'modal-save-btn') saveModal();
-  else if (a === 'modal-copyjson-btn') {
+  else if (t.id === 'modal-copyjson-btn') {
     if (!_modalCtx) return;
     const {coll, id} = _modalCtx;
     const rec = D[coll].find(r => r.id === id);
     if (!rec) return;
     const btn = document.getElementById('modal-copyjson-btn');
-    navigator.clipboard.writeText(JSON.stringify(rec, null, 2)).then(() => {
+    const json = JSON.stringify(rec, null, 2);
+    navigator.clipboard.writeText(json).then(() => {
       btn.textContent = '✓ Copied'; btn.style.color = 'var(--green)';
       setTimeout(() => { btn.textContent = 'Copy JSON'; btn.style.color = ''; }, 1800);
     }).catch(() => {
       const ta = document.createElement('textarea');
-      ta.value = JSON.stringify(rec, null, 2); ta.style.position='fixed'; ta.style.opacity='0';
+      ta.value = json; ta.style.position='fixed'; ta.style.opacity='0';
       document.body.appendChild(ta); ta.select(); document.execCommand('copy');
       document.body.removeChild(ta);
       btn.textContent = '✓ Copied'; btn.style.color = 'var(--green)';
